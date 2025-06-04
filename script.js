@@ -82,3 +82,183 @@
         };
         
         setTimeout(typeWriter, 1000);
+
+
+
+
+        const toggleBtn = document.getElementById('menu-toggle');
+    const navMenu = document.getElementById('nav-menu');
+
+    toggleBtn.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+    });
+
+
+
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+            const mobileCursor = document.getElementById('mobile-cursor');
+
+            function isTouchDevice() {
+                return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            }
+
+            if (isTouchDevice()) {
+                mobileCursor.style.display = 'block';
+
+                document.addEventListener('touchmove', (e) => {
+                    const touch = e.touches[0];
+                    if (touch) {
+                        mobileCursor.style.left = `${touch.clientX}px`;
+                        mobileCursor.style.top = `${touch.clientY}px`;
+                    }
+                }, { passive: true });
+            }
+        });
+
+
+
+
+
+
+class ImprovedCarousel {
+  constructor() {
+    this.carousel = document.querySelector('#carrusel');
+    this.track = document.querySelector('.carousel-track');
+    this.slides = document.querySelectorAll('.carousel-slide');
+    this.indicators = document.querySelectorAll('.indicator');
+    this.prevBtn = document.querySelector('.prev');
+    this.nextBtn = document.querySelector('.next');
+    this.currentIndex = 0;
+    this.isAnimating = false;
+    this.autoSlideInterval = null;
+    this.transitionTime = 700; // Debe coincidir con --transition-time en CSS
+    
+    this.init();
+  }
+  
+  init() {
+    // Configurar eventos
+    this.prevBtn.addEventListener('click', () => this.prevSlide());
+    this.nextBtn.addEventListener('click', () => this.nextSlide());
+    
+    // Configurar indicadores
+    this.indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        if (index !== this.currentIndex && !this.isAnimating) {
+          this.goToSlide(index);
+        }
+      });
+    });
+    
+    // Control por teclado
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') this.prevSlide();
+      if (e.key === 'ArrowRight') this.nextSlide();
+    });
+    
+    // Autoplay
+    this.startAutoSlide();
+    
+    // Pausar en hover
+    this.carousel.addEventListener('mouseenter', () => this.stopAutoSlide());
+    this.carousel.addEventListener('mouseleave', () => this.startAutoSlide());
+    
+    // Touch events para móviles
+    this.setupTouchEvents();
+  }
+  
+  updateSlides(newIndex, direction) {
+    this.isAnimating = true;
+    
+    // Actualizar clases de dirección
+    this.track.classList.remove('sliding-left', 'sliding-right');
+    this.track.classList.add(`sliding-${direction}`);
+    
+    // Actualizar slides
+    this.slides[this.currentIndex].classList.remove('active', 'prev', 'next');
+    this.slides[newIndex].classList.add('active');
+    
+    // Actualizar slides adyacentes para efecto 3D
+    const prevIndex = (newIndex - 1 + this.slides.length) % this.slides.length;
+    const nextIndex = (newIndex + 1) % this.slides.length;
+    
+    this.slides.forEach(slide => slide.classList.remove('prev', 'next'));
+    this.slides[prevIndex].classList.add('prev');
+    this.slides[nextIndex].classList.add('next');
+    
+    // Actualizar indicadores
+    this.indicators.forEach(indicator => indicator.classList.remove('active'));
+    this.indicators[newIndex].classList.add('active');
+    
+    this.currentIndex = newIndex;
+    
+    // Resetear animación
+    setTimeout(() => {
+      this.isAnimating = false;
+      this.track.classList.remove('sliding-left', 'sliding-right');
+    }, this.transitionTime);
+  }
+  
+  nextSlide() {
+    if (this.isAnimating) return;
+    const newIndex = (this.currentIndex + 1) % this.slides.length;
+    this.updateSlides(newIndex, 'right');
+  }
+  
+  prevSlide() {
+    if (this.isAnimating) return;
+    const newIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+    this.updateSlides(newIndex, 'left');
+  }
+  
+  goToSlide(index) {
+    if (index === this.currentIndex || this.isAnimating) return;
+    
+    const direction = index > this.currentIndex ? 'right' : 'left';
+    this.updateSlides(index, direction);
+  }
+  
+  startAutoSlide() {
+    this.stopAutoSlide();
+    this.autoSlideInterval = setInterval(() => this.nextSlide(), 5000);
+  }
+  
+  stopAutoSlide() {
+    if (this.autoSlideInterval) {
+      clearInterval(this.autoSlideInterval);
+      this.autoSlideInterval = null;
+    }
+  }
+  
+  setupTouchEvents() {
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    this.track.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+    
+    this.track.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      this.handleSwipe();
+    }, {passive: true});
+  }
+  
+  handleSwipe() {
+    const minSwipeDistance = 50;
+    const distance = touchStartX - touchEndX;
+    
+    if (distance > minSwipeDistance) {
+      this.nextSlide();
+    } else if (distance < -minSwipeDistance) {
+      this.prevSlide();
+    }
+  }
+}
+
+// Inicializar el carrusel cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+  new ImprovedCarousel();
+});
