@@ -23,14 +23,20 @@
     </header>
 
     <nav>
-        <ul>
-            <li><a href="#inicio">Inicio</a></li>
-            <li><a href="#servicios">Servicios</a></li>
-            <li><a href="#tecnologias">Tecnologías</a></li>
-            <li><a href="#proyectos">Proyectos</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-        </ul>
-    </nav>
+    <div class="menu-toggle" id="menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <ul id="nav-menu">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#tecnologias">Tecnologías</a></li>
+        <li><a href="#proyectos">Proyectos</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+    </ul>
+</nav>
+
 
     <main>
         <section id="inicio" class="hero">
@@ -322,5 +328,34 @@
 
     <script src="script.js"></script>
 
+    <script>
+    const toggleBtn = document.getElementById('menu-toggle');
+    const navMenu = document.getElementById('nav-menu');
+
+    toggleBtn.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+    });
+</script>
+<script>
+    const mobileCursor = document.getElementById('mobile-cursor');
+
+    function isTouchDevice() {
+        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    }
+
+    if (isTouchDevice()) {
+        mobileCursor.style.display = 'block';
+
+        document.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            mobileCursor.style.left = `${touch.clientX}px`;
+            mobileCursor.style.top = `${touch.clientY}px`;
+        });
+    }
+</script>
+
+<div class="mobile-cursor" id="mobile-cursor"></div>
+
 </body>
+
 </html>
