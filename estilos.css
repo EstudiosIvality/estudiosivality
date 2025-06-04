@@ -161,6 +161,54 @@
             opacity: 1;
         }
 
+
+
+        /* Menu Toggle - Estilo del ícono hamburguesa */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+    margin-left: 2rem;
+}
+
+.menu-toggle span {
+    display: block;
+    height: 3px;
+    background: var(--text-light);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Mostrar botón y ocultar menú en móviles */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex;
+    }
+
+    nav ul {
+        display: none;
+        flex-direction: column;
+        gap: 1.5rem;
+        background: rgba(26, 31, 44, 0.95);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+    }
+
+    nav ul.active {
+        display: flex;
+    }
+}
+
+
+
+
+
         /* Main Content */
         main {
             max-width: 1400px;
@@ -185,7 +233,7 @@
         .hero-content {
             position: relative;
             z-index: 2;
-            max-width: 900px;
+            max-width: 1000px;
         }
 
         .hero h1 {
@@ -617,6 +665,8 @@
             .projects-container {
                 grid-template-columns: 1fr;
             }
+
+            
         }
 
         @media (max-width: 480px) {
@@ -637,6 +687,22 @@
                 padding: 1.5rem;
             }
         }
+
+        @media (max-width: 480px) {
+            .hero {
+                height: 100vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                min-height: 100vh; /* o puedes usar auto */
+                height: auto;
+                padding-top: 4rem;
+                padding-bottom: 4rem;
+            }
+        }
+
 
         /* Animations */
         @keyframes fadeInUp {
@@ -689,4 +755,19 @@
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
     line-height: 1.5;
+}
+
+
+
+
+.mobile-cursor {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--accent-cyan); /* cambia el color si deseas */
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    display: none; /* lo ocultamos por defecto */
 }
