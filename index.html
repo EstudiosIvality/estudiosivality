@@ -326,6 +326,8 @@
         </div>
     </footer>
 
+    <div class="mobile-cursor" id="mobile-cursor"></div>
+
     <script src="script.js"></script>
 
     <script>
@@ -337,24 +339,27 @@
     });
 </script>
 <script>
-    const mobileCursor = document.getElementById('mobile-cursor');
+        document.addEventListener("DOMContentLoaded", () => {
+            const mobileCursor = document.getElementById('mobile-cursor');
 
-    function isTouchDevice() {
-        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    }
+            function isTouchDevice() {
+                return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            }
 
-    if (isTouchDevice()) {
-        mobileCursor.style.display = 'block';
+            if (isTouchDevice()) {
+                mobileCursor.style.display = 'block';
 
-        document.addEventListener('touchmove', (e) => {
-            const touch = e.touches[0];
-            mobileCursor.style.left = `${touch.clientX}px`;
-            mobileCursor.style.top = `${touch.clientY}px`;
+                document.addEventListener('touchmove', (e) => {
+                    const touch = e.touches[0];
+                    if (touch) {
+                        mobileCursor.style.left = `${touch.clientX}px`;
+                        mobileCursor.style.top = `${touch.clientY}px`;
+                    }
+                }, { passive: true });
+            }
         });
-    }
-</script>
+    </script>
 
-<div class="mobile-cursor" id="mobile-cursor"></div>
 
 </body>
 
