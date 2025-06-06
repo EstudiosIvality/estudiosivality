@@ -937,6 +937,17 @@
   opacity: 0.7;
 }
 
+.slide-content video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover; 
+  display: block;
+}
+
 .carousel-control:hover {
   opacity: 1;
   background: rgba(255, 255, 255, 0.2);
