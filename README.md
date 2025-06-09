@@ -1,4 +1,5 @@
-## Hi there 👋
+## Hola 👋
+## En Estudios Ivality combinamos creatividad y tecnología para construir soluciones digitales innovadoras ✨
 
 <!--
 **EstudiosIvality/estudiosivality** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
