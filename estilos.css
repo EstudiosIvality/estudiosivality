@@ -17,12 +17,17 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     font-family: 'Rajdhani', sans-serif;
     background: var(--primary-dark);
     color: var(--text-light);
     overflow-x: hidden;
     line-height: 1.6;
+    max-width: 100vw;
 }
 
 /* =============================================
@@ -310,6 +315,9 @@ h2 {
     margin-bottom: 2rem;
     position: relative;
     display: inline-block;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 h2::after {
@@ -325,7 +333,7 @@ h2::after {
 ============================================= */
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
     gap: 2.5rem;
     margin-top: 3rem;
 }
@@ -399,7 +407,7 @@ h2::after {
 ============================================= */
 .projects-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
     gap: 3rem;
     margin-top: 3rem;
 }
@@ -432,9 +440,25 @@ h2::after {
     background: linear-gradient(to bottom, transparent 60%, rgba(10, 15, 28, 0.9));
 }
 
-.project-video { overflow: hidden; }
+.project-video {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.project-video video {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    display: block;
+}
 
 .project-info { padding: 2.5rem; }
+
+.project-info p {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
 
 .project-info h3 {
     font-family: 'Orbitron', monospace;
@@ -442,6 +466,8 @@ h2::after {
     font-size: 1.4rem;
     margin-bottom: 1rem;
     text-transform: uppercase;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .tech-tags {
@@ -468,7 +494,7 @@ h2::after {
 ============================================= */
 .contact-info {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
     gap: 3rem;
     margin-top: 3rem;
 }
@@ -545,7 +571,7 @@ footer {
     margin: 0 auto;
     padding: 0 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
     gap: 3rem;
 }
 
@@ -902,10 +928,6 @@ footer {
         gap: 2rem;
     }
 
-    .project-info {
-        padding: 1.5rem;
-    }
-
     .carousel-track {
         height: 420px;
     }
@@ -982,7 +1004,8 @@ footer {
 
     /* Main */
     main {
-        padding: 0 1rem;
+        padding: 0 0.75rem;
+        width: 100%;
     }
 
     /* Hero */
@@ -991,6 +1014,7 @@ footer {
         min-height: 100svh;
         padding: 6rem 1rem 3rem;
         margin: 0;
+        width: 100%;
     }
 
     .hero h1 {
@@ -1017,11 +1041,12 @@ footer {
 
     /* Sections */
     section {
-        padding: 2rem 1.5rem;
+        padding: 2rem 1.25rem;
         margin-bottom: 2.5rem;
-        /* Remove complex clip-path on mobile — causes layout issues */
         clip-path: none;
         border-radius: 4px;
+        overflow: hidden;
+        width: 100%;
     }
 
     h2 {
@@ -1411,3 +1436,4 @@ footer {
         height: 260px;
     }
 }
+
