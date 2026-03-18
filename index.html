@@ -1,101 +1,131 @@
 <!DOCTYPE html>
-<html lang="es-MX">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- SEO PRINCIPAL -->
-    <title>Desarrollo Web en Monterrey | VR, Software y Videojuegos | Estudios Ivality</title>
+    <!-- ═══════════════════════════════════════════════════════
+         SEO — META TAGS OPTIMIZADOS 2025
+    ═══════════════════════════════════════════════════════ -->
 
-    <meta name="description" content="Estudios Ivality en Cadereyta Jiménez, Nuevo León. Desarrollo web, software, realidad virtual, videojuegos y simuladores 3D para empresas en Monterrey, MTY y todo México.">
+    <!-- TITLE: keyword primario + ciudad + diferenciador (≤60 chars aprox) -->
+    <title>Desarrollo Web, VR y Videojuegos en Monterrey | Estudios Ivality</title>
 
-    <meta name="keywords" content="Estudios Ivality, Humbrahexx, desarrollo web Monterrey, diseño web Monterrey, software a medida México, Cadereyta, Cadereyta Jiménez, monterrey, MTY, mexico, web, nuevo leon, n l, NL, realidad virtual, videojuegos Unity, simuladores 3D, UX UI, transformación digital, industria 4.0, desarrollo de software, landing page, portafolio digital, diseño gráfico">
+    <!-- META DESCRIPTION: comercial, con CTA, ≤155 chars -->
+    <meta name="description" content="Agencia de desarrollo web, realidad virtual y videojuegos en Monterrey y Nuevo León. Sitios, apps, simuladores 3D y software a medida. ¡Cotiza gratis hoy!">
 
+    <!-- KEYWORDS: obligatorias + long-tail local + servicios -->
+    <meta name="keywords" content="humbrahexx, cadereyta, cadereyta jimenez, Cadereyta Jiménez, monterrey, mty, mexico, México, web, nuevo leon, Nuevo León, n l, NL, N.L., Estudios Ivality, desarrollo web Monterrey, diseño web Nuevo León, agencia web NL, desarrollo de software Monterrey, realidad virtual Monterrey, videojuegos Unity, simuladores 3D, landing page Monterrey, transformación digital, industria 4.0, UX UI, diseño gráfico, motion graphics, aplicaciones web, portafolio digital">
+
+    <!-- AUTOR Y ROBOTS AVANZADO -->
     <meta name="author" content="Estudios Ivality">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <meta name="googlebot" content="index, follow">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow">
 
-    <!-- GEO SEO -->
+    <!-- GEOLOCALIZACIÓN -->
     <meta name="geo.region" content="MX-NL">
     <meta name="geo.placename" content="Cadereyta Jiménez, Nuevo León, México">
     <meta name="geo.position" content="25.5853;-99.9998">
     <meta name="ICBM" content="25.5853, -99.9998">
 
-    <!-- CANONICAL -->
+    <!-- CANÓNICA + HREFLANG -->
     <link rel="canonical" href="https://estudiosivality.github.io/estudiosivality/">
-
-    <!-- IDIOMA / REGIÓN -->
     <link rel="alternate" hreflang="es-MX" href="https://estudiosivality.github.io/estudiosivality/">
+    <link rel="alternate" hreflang="es" href="https://estudiosivality.github.io/estudiosivality/">
+    <link rel="alternate" hreflang="x-default" href="https://estudiosivality.github.io/estudiosivality/">
 
-    <!-- PERFORMANCE -->
-    <link rel="preload" as="image" href="https://estudiosivality.github.io/estudiosivality/assets/ivalityicon.png">
-    <meta name="theme-color" content="#0f172a">
-
-    <!-- OPEN GRAPH -->
+    <!-- OPEN GRAPH — Facebook, LinkedIn, WhatsApp (optimizado CTR) -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://estudiosivality.github.io/estudiosivality/">
-    <meta property="og:title" content="Desarrollo Web en Monterrey | Estudios Ivality">
-    <meta property="og:description" content="Soluciones digitales en Monterrey: desarrollo web, software, VR, videojuegos y diseño 3D para empresas.">
+    <meta property="og:title" content="Desarrollo Web, VR y Videojuegos en Monterrey | Estudios Ivality">
+    <meta property="og:description" content="Agencia digital en Monterrey, Nuevo León. Desarrollamos sitios web, apps, realidad virtual, videojuegos y simuladores 3D para empresas y proyectos en todo México.">
     <meta property="og:image" content="https://estudiosivality.github.io/estudiosivality/assets/ivalityicon.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Estudios Ivality — Desarrollo Web y VR en Monterrey, Nuevo León">
     <meta property="og:locale" content="es_MX">
     <meta property="og:site_name" content="Estudios Ivality">
 
-    <!-- TWITTER / X -->
+    <!-- TWITTER / X CARD -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Desarrollo Web en Monterrey | Estudios Ivality">
-    <meta name="twitter:description" content="Desarrollo web, software, VR y videojuegos en Nuevo León, México.">
+    <meta name="twitter:site" content="@IvalityEstudios">
+    <meta name="twitter:title" content="Desarrollo Web, VR y Videojuegos en Monterrey | Estudios Ivality">
+    <meta name="twitter:description" content="Agencia digital en Monterrey, NL. Sitios web, realidad virtual, videojuegos y simuladores 3D para empresas en México. ¡Cotiza gratis!">
     <meta name="twitter:image" content="https://estudiosivality.github.io/estudiosivality/assets/ivalityicon.png">
+    <meta name="twitter:image:alt" content="Estudios Ivality — Agencia Digital Monterrey">
 
-    <!-- SCHEMA SEO PRO -->
+    <!-- SCHEMA.ORG — ProfessionalService + LocalBusiness (Google Rich Results) -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "ProfessionalService",
+        "@type": ["ProfessionalService", "LocalBusiness"],
         "name": "Estudios Ivality",
-        "alternateName": "Humbrahexx",
-        "description": "Desarrollo web, software, realidad virtual, videojuegos y simuladores 3D en Monterrey y Nuevo León.",
+        "alternateName": ["Humbrahexx", "Ivality Studios"],
+        "description": "Agencia de desarrollo web, realidad virtual, videojuegos, simuladores 3D y diseño gráfico en Monterrey y Nuevo León. Ofrecemos soluciones digitales de alto impacto para empresas, industrias y proyectos en México.",
         "url": "https://estudiosivality.github.io/estudiosivality/",
-        "logo": "https://estudiosivality.github.io/estudiosivality/assets/ivalityicon.png",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://estudiosivality.github.io/estudiosivality/assets/ivalityicon.png"
+        },
         "image": "https://estudiosivality.github.io/estudiosivality/assets/ivalityicon.png",
         "telephone": "+528281460511",
         "email": "estudiosivality@gmail.com",
-
         "address": {
             "@type": "PostalAddress",
+            "streetAddress": "Zona Industrial Tecnológica",
             "addressLocality": "Cadereyta Jiménez",
             "addressRegion": "Nuevo León",
+            "postalCode": "66600",
             "addressCountry": "MX"
         },
-
         "geo": {
             "@type": "GeoCoordinates",
             "latitude": 25.5853,
             "longitude": -99.9998
         },
-
         "areaServed": [
-            "Cadereyta",
-            "Cadereyta Jiménez",
-            "Monterrey",
-            "Nuevo León",
-            "México"
+            {"@type": "City", "name": "Monterrey"},
+            {"@type": "City", "name": "Cadereyta Jiménez"},
+            {"@type": "AdministrativeArea", "name": "Nuevo León"},
+            {"@type": "Country", "name": "México"}
         ],
-
-        "serviceType": [
-            "Desarrollo Web",
-            "Desarrollo de Software",
-            "Realidad Virtual",
-            "Videojuegos",
-            "Simulación 3D",
-            "Diseño UX/UI"
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Servicios Digitales",
+            "itemListElement": [
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Desarrollo Web", "description": "Sitios corporativos, landing pages y portafolios digitales modernos y responsivos"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Desarrollo de Software", "description": "Aplicaciones web, sistemas de gestión y plataformas a medida"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Realidad Virtual y Aumentada", "description": "Simuladores de capacitación, recorridos virtuales y apps inmersivas"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Videojuegos y Simuladores 3D", "description": "Videojuegos 2D/3D, gamificación y simuladores industriales en Unity"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Diseño Gráfico y Multimedia", "description": "Identidad visual, motion graphics y contenido para redes sociales"}}
+            ]
+        },
+        "openingHoursSpecification": [
+            {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "18:00"},
+            {"@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "14:00"}
         ],
-
         "sameAs": [
             "https://www.linkedin.com/in/estudiosivality/",
             "https://www.facebook.com/IvalityEstudios",
             "https://github.com/EstudiosIvality",
             "https://www.youtube.com/@IvalityEstudios"
+        ],
+        "knowsAbout": ["Desarrollo Web", "Realidad Virtual", "Unity 3D", "Autodesk Maya", "Videojuegos", "Industria 4.0", "Transformación Digital", "Inteligencia Artificial"],
+        "slogan": "Innovación sin límites para la industria del futuro"
+    }
+    </script>
+
+    <!-- BREADCRUMB SCHEMA (ayuda a rich snippets de navegación) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://estudiosivality.github.io/estudiosivality/"},
+            {"@type": "ListItem", "position": 2, "name": "Servicios", "item": "https://estudiosivality.github.io/estudiosivality/#servicios"},
+            {"@type": "ListItem", "position": 3, "name": "Proyectos", "item": "https://estudiosivality.github.io/estudiosivality/#proyectos"},
+            {"@type": "ListItem", "position": 4, "name": "Contacto", "item": "https://estudiosivality.github.io/estudiosivality/#contacto"}
         ]
     }
     </script>
@@ -103,13 +133,19 @@
     <!-- Favicons -->
     <link rel="icon" type="image/png" href="assets/ivalityicon.png">
     <link rel="shortcut icon" type="image/png" href="assets/ivalityicon.png">
-    <link rel="apple-touch-icon" href="assets/ivalityicon.png">
-    <meta name="theme-color" content="#f0f2f7">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/ivalityicon.png">
+    <meta name="theme-color" content="#3d4fff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#00e5ff" media="(prefers-color-scheme: dark)">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Estudios Ivality">
 
-    <!-- Fuentes y estilos externos -->
+    <!-- PRECONNECT + DNS-PREFETCH para velocidad de carga -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <!-- ================================================
@@ -1408,8 +1444,8 @@
         <!-- HERO -->
         <section id="inicio" class="hero">
             <div class="hero-content">
-                <h1>Transformamos Ideas en Soluciones Interactivas</h1>
-                <p>En Estudios Ivality combinamos creatividad y tecnología para construir soluciones digitales innovadoras.</p>
+                <h1>Desarrollo Web, VR y Software en Monterrey, Nuevo León</h1>
+                <p>En <strong>Estudios Ivality</strong> combinamos creatividad y tecnología para construir soluciones digitales innovadoras para empresas en Monterrey, Cadereyta y todo México.</p>
                 <ul class="intro-list">
                     <li>Diseño y programación de páginas web modernas y responsivas.</li>
                     <li>Desarrollo de videojuegos y simuladores en entornos 3D.</li>
@@ -1422,8 +1458,8 @@
         </section>
 
         <!-- SERVICIOS -->
-        <section id="servicios">
-            <h2>Nuestros Servicios</h2>
+        <section id="servicios" aria-label="Servicios de desarrollo web, realidad virtual y videojuegos en Monterrey">
+            <h2>Nuestros Servicios en Monterrey y Nuevo León</h2>
             <p>Desarrollamos soluciones tecnológicas y visuales a medida que impulsan la transformación digital de empresas, instituciones y marcas. Integramos creatividad, funcionalidad y tecnología para ofrecer resultados innovadores y efectivos.</p>
             <div class="services-grid">
                 <div class="service-card">
@@ -1512,7 +1548,7 @@
         </section>
 
         <!-- PROYECTOS -->
-        <section id="proyectos">
+        <section id="proyectos" aria-label="Proyectos destacados de desarrollo web y software en Nuevo León">
             <h2>Proyectos Destacados</h2>
             <p>Soluciones reales entregadas a clientes en distintos sectores. Cada proyecto refleja nuestra capacidad técnica, diseño funcional y orientación a resultados.</p>
             <div class="projects-container">
@@ -2072,7 +2108,7 @@
             </div>
         </div>
         <div class="copyright">
-            <p>&copy; 2025 Estudios Ivality. Todos los derechos reservados. | Innovación sin límites para la industria del futuro.</p>
+            <p>&copy; 2025 Estudios Ivality. Todos los derechos reservados. | Innovación sin límites para la industria del futuro. | Agencia digital en <span itemscope itemtype="https://schema.org/City"><span itemprop="name">Monterrey</span></span>, <span itemscope itemtype="https://schema.org/AdministrativeArea"><span itemprop="name">Nuevo León</span></span>, México.</p>
         </div>
     </footer>
 
