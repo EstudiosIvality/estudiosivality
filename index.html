@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,13 +10,1262 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="estilos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- ================================================
+         TEMA 1: DARK / TECH  (activo cuando data-theme="dark")
+         TEMA 2: LIGHT / LIQUID GLASS (activo cuando data-theme="light")
+    ================================================ -->
+    <style>
+    /* ============================================================
+       SWITCH DE TEMA — variables y lógica de selección
+    ============================================================ */
+
+    /* — Tema oscuro (por defecto) — */
+    :root,
+    [data-theme="dark"] {
+        --bg-void:       #050810;
+        --bg-deep:       #080d1a;
+        --bg-card:       #0d1322;
+        --bg-elevated:   #111828;
+        --border-dim:    rgba(0, 229, 255, 0.12);
+        --border-glow:   rgba(0, 229, 255, 0.45);
+        --cyan:          #00e5ff;
+        --cyan-dim:      rgba(0, 229, 255, 0.6);
+        --orange:        #ff6b00;
+        --orange-dim:    rgba(255, 107, 0, 0.5);
+        --gold:          #ffb300;
+        --green-circuit: #00ff88;
+        --text-bright:   #f0f6ff;
+        --text-mid:      rgba(200, 220, 240, 0.75);
+        --text-dim:      rgba(160, 190, 210, 0.5);
+        --glow-cyan:     0 0 40px rgba(0, 229, 255, 0.25);
+        --glow-orange:   0 0 40px rgba(255, 107, 0, 0.25);
+        --radius-sharp:  2px;
+        --radius-card:   6px;
+        --clip-corner:   polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));
+        --clip-btn:      polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+        --clip-tag:      polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+        --transition:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* switch pill */
+        --switch-bg:       rgba(0, 229, 255, 0.12);
+        --switch-border:   rgba(0, 229, 255, 0.4);
+        --switch-knob:     var(--cyan);
+        --switch-icon-off: '☀';
+        --switch-icon-on:  '☾';
+    }
+
+    /* — Tema claro — */
+    [data-theme="light"] {
+        --bg-void:       #f0f2f7;
+        --bg-deep:       #e8ebf4;
+        --bg-card:       rgba(255,255,255,0.65);
+        --bg-elevated:   rgba(255,255,255,0.85);
+        --border-dim:    rgba(61, 79, 255, 0.12);
+        --border-glow:   rgba(61, 79, 255, 0.35);
+        --cyan:          #3d4fff;
+        --cyan-dim:      rgba(61, 79, 255, 0.6);
+        --orange:        #8f5fff;
+        --orange-dim:    rgba(143, 95, 255, 0.5);
+        --gold:          #ff4f7a;
+        --green-circuit: #3d4fff;
+        --text-bright:   #0d1026;
+        --text-mid:      #3a3f5c;
+        --text-dim:      #6b7080;
+        --glow-cyan:     0 0 40px rgba(61, 79, 255, 0.2);
+        --glow-orange:   0 0 40px rgba(143, 95, 255, 0.2);
+        --radius-sharp:  8px;
+        --radius-card:   16px;
+        --clip-corner:   none;
+        --clip-btn:      none;
+        --clip-tag:      none;
+        --transition:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+        --switch-bg:     rgba(61, 79, 255, 0.08);
+        --switch-border: rgba(61, 79, 255, 0.3);
+        --switch-knob:   #3d4fff;
+    }
+
+    /* ============================================================
+       RESET
+    ============================================================ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { overflow-x: hidden; scroll-behavior: smooth; }
+    body {
+        font-family: 'Rajdhani', sans-serif;
+        background: var(--bg-void);
+        color: var(--text-bright);
+        overflow-x: hidden;
+        line-height: 1.65;
+        max-width: 100vw;
+        -webkit-font-smoothing: antialiased;
+        transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* ============================================================
+       FONDO ANIMADO
+    ============================================================ */
+    .circuit-bg {
+        position: fixed; inset: 0; z-index: -2;
+        transition: background 0.6s ease;
+    }
+    [data-theme="dark"] .circuit-bg {
+        background:
+            radial-gradient(ellipse 60% 50% at 15% 25%, rgba(0,229,255,0.07) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 60% at 85% 75%, rgba(255,107,0,0.06) 0%, transparent 70%),
+            radial-gradient(ellipse 40% 40% at 50% 50%, rgba(0,255,136,0.03) 0%, transparent 70%),
+            #050810;
+    }
+    [data-theme="light"] .circuit-bg {
+        background:
+            radial-gradient(ellipse 70% 60% at 10% 20%,  rgba(120,160,255,0.22) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 70% at 90% 80%,  rgba(180,100,255,0.15) 0%, transparent 60%),
+            radial-gradient(ellipse 60% 50% at 50% 50%,  rgba(61,79,255,0.07) 0%, transparent 70%),
+            linear-gradient(160deg, #dde4f8 0%, #eaeef9 40%, #f4eeff 70%, #f0f3fc 100%);
+    }
+
+    .circuit-lines {
+        position: fixed; inset: 0; z-index: -1; pointer-events: none;
+        transition: opacity 0.4s ease;
+    }
+    [data-theme="dark"] .circuit-lines {
+        background-image:
+            linear-gradient(90deg, transparent 0%, transparent 99%, rgba(0,229,255,0.06) 99.5%, transparent 100%),
+            linear-gradient(0deg,  transparent 0%, transparent 99%, rgba(0,229,255,0.04) 99.5%, transparent 100%);
+        background-size: 80px 80px;
+        animation: gridDrift 30s linear infinite;
+        opacity: 1;
+    }
+    [data-theme="light"] .circuit-lines {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        background-size: 200px 200px;
+        opacity: 0.6;
+    }
+    @keyframes gridDrift {
+        from { transform: translate(0,0); }
+        to   { transform: translate(80px,80px); }
+    }
+
+    /* ============================================================
+       THEME SWITCH BUTTON
+    ============================================================ */
+    .theme-switch {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        padding: 0 1.5rem;
+        border: none;
+        background: transparent;
+        flex-shrink: 0;
+    }
+
+    .switch-track {
+        position: relative;
+        width: 48px; height: 26px;
+        background: var(--switch-bg);
+        border: 1px solid var(--switch-border);
+        border-radius: 999px;
+        transition: background 0.3s, border-color 0.3s;
+    }
+
+    .switch-knob {
+        position: absolute;
+        top: 3px; left: 3px;
+        width: 18px; height: 18px;
+        background: var(--switch-knob);
+        border-radius: 50%;
+        transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    [data-theme="light"] .switch-knob {
+        transform: translateX(22px);
+    }
+
+    .switch-icon {
+        font-size: 0.85rem;
+        line-height: 1;
+        transition: color 0.3s, opacity 0.3s;
+    }
+
+    .switch-icon.sun  { color: var(--gold); }
+    .switch-icon.moon { color: var(--cyan); }
+
+    [data-theme="light"] .switch-icon.moon { opacity: 0.4; }
+    [data-theme="dark"]  .switch-icon.sun  { opacity: 0.4; }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    header {
+        position: relative;
+        padding: 3rem 0 2.5rem;
+        border-bottom: 1px solid var(--border-glow);
+        overflow: hidden;
+        transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+    }
+    [data-theme="dark"] header {
+        background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-void) 100%);
+        box-shadow: 0 0 30px rgba(0,229,255,0.08);
+    }
+    [data-theme="light"] header {
+        background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(240,244,255,0.7) 100%);
+        backdrop-filter: blur(24px) saturate(200%);
+        -webkit-backdrop-filter: blur(24px) saturate(200%);
+        box-shadow: 0 4px 40px rgba(100,130,200,0.15), inset 0 -1px 0 rgba(255,255,255,0.6);
+    }
+
+    header::before {
+        content: '';
+        position: absolute;
+        bottom: -1px; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, var(--cyan) 30%, var(--orange) 70%, transparent 100%);
+        animation: scanLine 4s ease-in-out infinite;
+    }
+    @keyframes scanLine {
+        0%, 100% { opacity: 0.4; transform: scaleX(0.6); }
+        50%       { opacity: 1;   transform: scaleX(1); }
+    }
+
+    .header-content {
+        max-width: 1400px; margin: 0 auto; padding: 0 2rem;
+        text-align: center; position: relative; z-index: 1;
+    }
+
+    .logo {
+        font-family: 'Orbitron', monospace;
+        font-size: 3.6rem; font-weight: 900;
+        letter-spacing: 8px; text-transform: uppercase;
+        cursor: default; user-select: none;
+        transition: filter 0.4s;
+    }
+    [data-theme="dark"] .logo {
+        background: linear-gradient(90deg, var(--cyan) 0%, var(--text-bright) 40%, var(--orange) 80%, var(--gold) 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+        filter: drop-shadow(0 0 20px rgba(0,229,255,0.5));
+        animation: logoBreath 4s ease-in-out infinite alternate;
+    }
+    [data-theme="light"] .logo {
+        background: linear-gradient(135deg, var(--cyan) 0%, var(--orange) 50%, var(--gold) 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+        filter: drop-shadow(0 2px 12px rgba(61,79,255,0.3));
+    }
+    @keyframes logoBreath {
+        from { filter: drop-shadow(0 0 15px rgba(0,229,255,0.4)) drop-shadow(0 0 40px rgba(0,229,255,0.1)); }
+        to   { filter: drop-shadow(0 0 25px rgba(255,107,0,0.5)) drop-shadow(0 0 60px rgba(255,107,0,0.2)); }
+    }
+    .logo:hover { animation: glitch 0.4s steps(1) forwards; }
+    @keyframes glitch {
+        0%   { transform: translate(0); }
+        20%  { transform: translate(-3px, 2px); }
+        40%  { transform: translate(3px, -2px); }
+        60%  { transform: translate(-2px, 3px); }
+        80%  { transform: translate(2px, -3px); }
+        100% { transform: translate(0); }
+    }
+
+    .tagline {
+        font-size: 1.1rem; font-weight: 500;
+        color: var(--text-dim); letter-spacing: 4px;
+        text-transform: uppercase; margin-top: 0.75rem;
+    }
+
+    /* ============================================================
+       NAV — DESKTOP
+    ============================================================ */
+    nav {
+        padding: 0;
+        position: sticky; top: 0; z-index: 1000;
+        border-bottom: 1px solid var(--border-dim);
+        transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+    }
+    [data-theme="dark"] nav {
+        background: rgba(8,13,26,0.96);
+        backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    [data-theme="light"] nav {
+        background: rgba(255,255,255,0.82);
+        backdrop-filter: blur(24px) saturate(200%); -webkit-backdrop-filter: blur(24px) saturate(200%);
+        box-shadow: 0 4px 24px rgba(100,130,200,0.12), inset 0 -1px 0 rgba(61,79,255,0.06);
+    }
+
+    .nav-inner {
+        display: flex; align-items: center; justify-content: space-between;
+        max-width: 1400px; margin: 0 auto; padding: 0 2rem;
+    }
+
+    nav ul {
+        display: flex; list-style: none; gap: 0;
+        flex: 1; justify-content: center;
+    }
+
+    nav a {
+        font-family: 'Orbitron', monospace; color: var(--text-mid);
+        text-decoration: none; font-weight: 600; font-size: 0.82rem;
+        text-transform: uppercase; letter-spacing: 2px;
+        display: block; padding: 1.4rem 1.6rem;
+        position: relative; transition: color var(--transition);
+    }
+    nav a::after {
+        content: ''; position: absolute;
+        bottom: 0; left: 50%; width: 0; height: 2px;
+        background: linear-gradient(90deg, var(--cyan), var(--orange));
+        border-radius: 999px; transform: translateX(-50%);
+        transition: width var(--transition);
+    }
+    nav a:hover { color: var(--cyan); }
+    nav a:hover::after { width: 70%; }
+
+    /* ============================================================
+       HAMBURGER (mobile)
+    ============================================================ */
+    .menu-toggle {
+        display: none; flex-direction: column;
+        justify-content: space-between;
+        width: 26px; height: 18px;
+        cursor: pointer; z-index: 1100;
+        background: transparent; border: none; padding: 0;
+    }
+    .menu-toggle span {
+        display: block; height: 2px;
+        background: var(--cyan); border-radius: 2px;
+        transition: all 0.35s ease;
+    }
+    .menu-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .menu-toggle.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .menu-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* ============================================================
+       SIDEBAR MÓVIL
+    ============================================================ */
+    .sidebar-overlay {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+        z-index: 1050;
+        opacity: 0;
+        transition: opacity 0.35s ease;
+    }
+    .sidebar-overlay.visible { opacity: 1; }
+
+    .sidebar {
+        position: fixed;
+        top: 0; left: 0;
+        width: 280px; height: 100dvh;
+        z-index: 1060;
+        display: flex; flex-direction: column;
+        transform: translateX(-100%);
+        transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+        overflow: hidden;
+    }
+    [data-theme="dark"] .sidebar {
+        background: rgba(8,13,26,0.98);
+        border-right: 1px solid var(--border-glow);
+        box-shadow: 8px 0 40px rgba(0,229,255,0.1);
+    }
+    [data-theme="light"] .sidebar {
+        background: rgba(255,255,255,0.96);
+        backdrop-filter: blur(24px);
+        border-right: 1px solid rgba(255,255,255,0.8);
+        box-shadow: 8px 0 40px rgba(61,79,255,0.12);
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .sidebar-header {
+        padding: 2rem 1.5rem 1.5rem;
+        border-bottom: 1px solid var(--border-dim);
+        display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .sidebar-logo {
+        font-family: 'Orbitron', monospace;
+        font-size: 1rem; font-weight: 800;
+        letter-spacing: 3px; text-transform: uppercase;
+        background: linear-gradient(90deg, var(--cyan), var(--orange));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    .sidebar-close {
+        background: transparent; border: none;
+        color: var(--text-dim); font-size: 1.4rem;
+        cursor: pointer; padding: 0.3rem;
+        transition: color var(--transition);
+        line-height: 1;
+    }
+    .sidebar-close:hover { color: var(--cyan); }
+
+    .sidebar-nav {
+        flex: 1; overflow-y: auto;
+        padding: 1.5rem 0;
+    }
+
+    .sidebar-nav ul { list-style: none; }
+    .sidebar-nav li { border-bottom: 1px solid var(--border-dim); }
+    .sidebar-nav li:last-child { border-bottom: none; }
+
+    .sidebar-nav a {
+        font-family: 'Orbitron', monospace;
+        display: flex; align-items: center; gap: 1rem;
+        padding: 1rem 1.75rem;
+        color: var(--text-mid); text-decoration: none;
+        font-size: 0.85rem; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 1.5px;
+        transition: all var(--transition);
+        position: relative;
+    }
+    .sidebar-nav a::before {
+        content: '';
+        position: absolute; left: 0; top: 0; bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, var(--cyan), var(--orange));
+        transform: scaleY(0); transform-origin: bottom;
+        transition: transform var(--transition);
+        border-radius: 0 2px 2px 0;
+    }
+    .sidebar-nav a:hover { color: var(--cyan); padding-left: 2.25rem; }
+    .sidebar-nav a:hover::before { transform: scaleY(1); }
+
+    .sidebar-nav .nav-icon {
+        font-size: 1rem; color: var(--orange);
+        width: 20px; text-align: center;
+        transition: color var(--transition);
+    }
+    .sidebar-nav a:hover .nav-icon { color: var(--cyan); }
+
+    .sidebar-footer {
+        padding: 1.5rem;
+        border-top: 1px solid var(--border-dim);
+        display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .sidebar-theme-label {
+        font-family: 'Orbitron', monospace;
+        font-size: 0.7rem; color: var(--text-dim);
+        text-transform: uppercase; letter-spacing: 1px;
+    }
+
+    /* ============================================================
+       MAIN
+    ============================================================ */
+    main { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+        position: relative; min-height: 100vh;
+        display: flex; align-items: center; justify-content: center;
+        text-align: center; padding: 8rem 2rem 6rem; overflow: hidden;
+    }
+    [data-theme="dark"] .hero::before {
+        content: '';
+        position: absolute; inset: 0;
+        background:
+            radial-gradient(ellipse 70% 60% at 50% 50%, rgba(0,229,255,0.06) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 40% at 20% 80%, rgba(255,107,0,0.05) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    [data-theme="light"] .hero::before {
+        content: '';
+        position: absolute; inset: 0;
+        background:
+            radial-gradient(ellipse 60% 60% at 10% 20%, rgba(120,160,255,0.15) 0%, transparent 60%),
+            radial-gradient(ellipse 50% 50% at 90% 80%, rgba(143,95,255,0.12) 0%, transparent 60%);
+        pointer-events: none;
+        animation: orbFloat 10s ease-in-out infinite alternate;
+    }
+    @keyframes orbFloat {
+        from { transform: scale(1) translate(0,0); }
+        to   { transform: scale(1.05) translate(10px,-10px); }
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute; top: 0; left: -100%;
+        width: 1px; height: 100%;
+        background: linear-gradient(180deg, transparent, var(--cyan), transparent);
+        animation: heroCursor 10s ease-in-out infinite;
+        pointer-events: none; opacity: 0.3;
+    }
+    @keyframes heroCursor {
+        0%   { left: -5%; opacity: 0; }
+        10%  { opacity: 0.3; }
+        90%  { opacity: 0.3; }
+        100% { left: 105%; opacity: 0; }
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+
+    .hero h1 {
+        font-family: 'Orbitron', monospace;
+        font-size: 3.2rem; font-weight: 800;
+        line-height: 1.15; letter-spacing: 2px;
+        text-transform: uppercase; margin-bottom: 1.75rem;
+        background: linear-gradient(135deg, var(--text-bright) 20%, var(--cyan) 60%, var(--orange) 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    .hero p {
+        font-size: 1.2rem; color: var(--text-mid);
+        margin-bottom: 2.5rem; max-width: 680px;
+        margin-left: auto; margin-right: auto; line-height: 1.7;
+    }
+
+    .intro-list {
+        list-style: none; padding: 0;
+        margin: 0 auto 2.5rem; max-width: 680px;
+        display: grid; gap: 0.6rem; text-align: left;
+        transition: background 0.4s, border-color 0.4s;
+    }
+    [data-theme="light"] .intro-list {
+        background: rgba(255,255,255,0.65);
+        backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.8);
+        border-radius: 16px;
+        padding: 1.75rem 2rem;
+        box-shadow: 0 8px 40px rgba(100,130,200,0.12), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .intro-list li {
+        font-size: 1rem; color: var(--text-mid);
+        padding: 0.45rem 0.6rem 0.45rem 1.5rem;
+        position: relative;
+        border-bottom: 1px solid var(--border-dim);
+        transition: color var(--transition);
+    }
+    .intro-list li:last-child { border-bottom: none; }
+    .intro-list li:hover { color: var(--text-bright); }
+    .intro-list li::before {
+        content: '▸'; position: absolute; left: 0.3rem;
+        color: var(--cyan); font-size: 0.8rem;
+        top: 50%; transform: translateY(-50%);
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn {
+        display: inline-block;
+        font-family: 'Orbitron', monospace; font-weight: 700;
+        font-size: 0.88rem; text-transform: uppercase;
+        letter-spacing: 2px; text-decoration: none;
+        padding: 0.95rem 2.5rem;
+        border: none; cursor: pointer;
+        position: relative; overflow: hidden;
+        clip-path: var(--clip-btn);
+        border-radius: var(--radius-sharp);
+        transition: transform var(--transition), box-shadow var(--transition);
+    }
+    [data-theme="dark"] .btn {
+        background: linear-gradient(90deg, var(--cyan), var(--orange));
+        color: var(--bg-void);
+        box-shadow: 0 6px 24px rgba(0,229,255,0.3);
+    }
+    [data-theme="light"] .btn {
+        background: linear-gradient(135deg, var(--cyan) 0%, var(--orange) 100%);
+        color: #fff;
+        box-shadow: 0 6px 24px rgba(61,79,255,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+        border-radius: 999px;
+    }
+    .btn::before {
+        content: ''; position: absolute; top: 0; left: -100%;
+        width: 60%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transform: skewX(-20deg); transition: left 0.55s ease;
+    }
+    .btn:hover::before { left: 150%; }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(0,229,255,0.4); }
+    .btn.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+    /* ============================================================
+       SECTIONS
+    ============================================================ */
+    section {
+        margin-bottom: 5rem;
+        padding: 4rem;
+        position: relative; overflow: hidden;
+        transition: background 0.4s, border-color 0.4s, box-shadow 0.4s, border-radius 0.4s;
+    }
+    [data-theme="dark"] section {
+        background: rgba(13,19,34,0.85);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--border-dim);
+        clip-path: var(--clip-corner);
+    }
+    [data-theme="dark"] section:hover { border-color: rgba(0,229,255,0.25); }
+    [data-theme="light"] section {
+        background: rgba(255,255,255,0.65);
+        backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.8);
+        border-radius: 24px;
+        box-shadow: 0 12px 48px rgba(100,130,200,0.12), inset 0 1px 0 rgba(255,255,255,0.95);
+    }
+    [data-theme="light"] section:hover { box-shadow: 0 20px 64px rgba(61,79,255,0.16), inset 0 1px 0 rgba(255,255,255,0.95); }
+
+    /* Reflejo superior (ambos temas) */
+    section::before {
+        content: ''; position: absolute;
+        top: 0; left: 10%; right: 10%; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6) 50%, transparent);
+        pointer-events: none;
+    }
+
+    h2 {
+        font-family: 'Orbitron', monospace;
+        font-size: 2.4rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 4px;
+        margin-bottom: 1.5rem;
+        color: var(--text-bright);
+        position: relative; display: inline-block;
+        overflow-wrap: break-word; word-break: break-word;
+    }
+    h2::after {
+        content: ''; position: absolute;
+        bottom: -10px; left: 0; height: 2px;
+        background: linear-gradient(90deg, var(--cyan), var(--orange), transparent);
+        border-radius: 999px;
+        transition: width var(--transition);
+        width: 60px;
+    }
+    section:hover h2::after { width: 100%; }
+
+    section > p {
+        color: var(--text-mid); font-size: 1.1rem;
+        max-width: 800px; margin-bottom: 3rem; line-height: 1.7;
+    }
+
+    /* ============================================================
+       SERVICES GRID
+    ============================================================ */
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(280px,100%),1fr));
+        gap: 1.5rem; margin-top: 2rem;
+    }
+
+    .service-card {
+        padding: 2.5rem 2rem; position: relative; overflow: hidden;
+        transition: all var(--transition);
+    }
+    [data-theme="dark"] .service-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-dim);
+        clip-path: polygon(16px 0%, 100% 0%, calc(100% - 16px) 100%, 0% 100%);
+    }
+    [data-theme="dark"] .service-card:hover {
+        background: var(--bg-elevated);
+        border-color: var(--border-glow);
+        transform: translateY(-6px);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5), var(--glow-cyan);
+    }
+    [data-theme="light"] .service-card {
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.8);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(100,130,200,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    [data-theme="light"] .service-card:hover {
+        background: rgba(255,255,255,0.9);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 50px rgba(61,79,255,0.18), inset 0 1px 0 rgba(255,255,255,0.95);
+    }
+
+    .service-card::before {
+        content: ''; position: absolute;
+        top: 0; left: 0; right: 0; height: 2px;
+        background: linear-gradient(90deg, var(--cyan), var(--orange));
+        transform: scaleX(0); transform-origin: left;
+        transition: transform var(--transition);
+    }
+    [data-theme="light"] .service-card::before { border-radius: 16px 16px 0 0; }
+    .service-card:hover::before { transform: scaleX(1); }
+
+    .service-icon {
+        font-size: 2.5rem; color: var(--orange);
+        margin-bottom: 1.25rem; display: block;
+        transition: color var(--transition), transform var(--transition);
+    }
+    .service-card:hover .service-icon { color: var(--cyan); transform: scale(1.1) translateY(-2px); }
+
+    .service-card h3 {
+        font-family: 'Orbitron', monospace; font-size: 1.05rem;
+        color: var(--cyan); margin-bottom: 0.9rem;
+        text-transform: uppercase; letter-spacing: 1px;
+    }
+    .service-card p { color: var(--text-mid); margin-bottom: 1.2rem; font-size: 0.97rem; line-height: 1.6; }
+    .service-card ul { list-style: none; }
+    .service-card li {
+        color: var(--text-bright); margin-bottom: 0.6rem;
+        padding-left: 1.2rem; position: relative;
+        font-size: 0.92rem; font-weight: 500;
+    }
+    .service-card li::before { content: '›'; position: absolute; left: 0; color: var(--orange); font-weight: 700; }
+
+    /* ============================================================
+       PROJECTS
+    ============================================================ */
+    .projects-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(360px,100%),1fr));
+        gap: 2rem; margin-top: 2rem;
+    }
+
+    .project-card {
+        overflow: hidden; position: relative;
+        transition: all var(--transition);
+    }
+    [data-theme="dark"] .project-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-dim);
+        clip-path: var(--clip-corner);
+    }
+    [data-theme="dark"] .project-card:hover {
+        border-color: var(--border-glow);
+        transform: translateY(-5px);
+        box-shadow: 0 25px 60px rgba(0,0,0,0.6), var(--glow-cyan);
+    }
+    [data-theme="light"] .project-card {
+        background: rgba(255,255,255,0.65);
+        backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.8);
+        border-radius: 16px;
+        box-shadow: 0 6px 24px rgba(100,130,200,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    [data-theme="light"] .project-card:hover {
+        transform: translateY(-6px) scale(1.01);
+        box-shadow: 0 24px 60px rgba(61,79,255,0.2), inset 0 1px 0 rgba(255,255,255,0.95);
+    }
+
+    .project-image {
+        height: 240px; background-size: cover;
+        background-position: center; position: relative;
+        background-color: var(--bg-deep); overflow: hidden;
+    }
+    [data-theme="dark"] .project-image::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(to bottom, transparent 50%, var(--bg-card) 100%);
+    }
+    [data-theme="light"] .project-image::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.85) 100%);
+    }
+
+    .project-video { position: relative; overflow: hidden; width: 100%; }
+    .project-video video, .project-video iframe {
+        width: 100%; height: 240px; object-fit: cover; display: block; border: none;
+    }
+
+    .project-info { padding: 2rem; }
+    .project-info h3 {
+        font-family: 'Orbitron', monospace; color: var(--cyan);
+        font-size: 1.05rem; margin-bottom: 0.9rem;
+        text-transform: uppercase; letter-spacing: 0.5px;
+        line-height: 1.3; overflow-wrap: break-word; word-break: break-word;
+    }
+    .project-info p { color: var(--text-mid); font-size: 0.92rem; line-height: 1.65; overflow-wrap: break-word; }
+
+    .tech-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1.25rem 0 1.5rem; }
+    .tech-tag {
+        padding: 0.3rem 0.9rem; font-size: 0.72rem; font-weight: 700;
+        font-family: 'Orbitron', monospace; text-transform: uppercase; letter-spacing: 0.5px;
+        clip-path: var(--clip-tag); border-radius: var(--radius-sharp);
+        transition: all var(--transition);
+    }
+    [data-theme="dark"] .tech-tag {
+        background: linear-gradient(90deg, rgba(0,229,255,0.12), rgba(255,107,0,0.12));
+        border: 1px solid rgba(0,229,255,0.3); color: var(--cyan);
+    }
+    [data-theme="dark"] .tech-tag:hover { background: linear-gradient(90deg, rgba(0,229,255,0.25), rgba(255,107,0,0.25)); border-color: var(--cyan); }
+    [data-theme="light"] .tech-tag {
+        background: rgba(61,79,255,0.08); border: 1px solid rgba(61,79,255,0.2);
+        color: var(--cyan); border-radius: 999px; clip-path: none;
+    }
+    [data-theme="light"] .tech-tag:hover { background: rgba(61,79,255,0.15); border-color: var(--cyan); }
+
+    .project-card.placeholder {
+        border-style: dashed; border-color: var(--border-dim); opacity: 0.65;
+    }
+    .project-card.placeholder:hover { opacity: 0.9; }
+
+    /* ============================================================
+       CAROUSEL / GALERÍA
+    ============================================================ */
+    #carrusel {
+        --transition-time: 0.6s;
+        padding: 4rem 2rem;
+        position: relative; overflow: hidden;
+        transition: background 0.4s;
+    }
+    [data-theme="dark"] #carrusel {
+        background: var(--bg-deep);
+    }
+    [data-theme="dark"] #carrusel::before {
+        content: ''; position: absolute; inset: 0;
+        background: repeating-linear-gradient(
+            -45deg, transparent, transparent 40px,
+            rgba(0,229,255,0.012) 40px, rgba(0,229,255,0.012) 41px);
+        pointer-events: none;
+    }
+    [data-theme="light"] #carrusel { background: transparent; padding: 1rem 2rem 4rem; }
+
+    .carousel-header { margin-bottom: 2.5rem; }
+
+    .carousel-title {
+        font-family: 'Orbitron', monospace; font-size: 2.4rem;
+        font-weight: 700; color: var(--text-bright);
+        text-transform: uppercase; letter-spacing: 4px;
+        position: relative; display: inline-block;
+    }
+    .carousel-title::after {
+        content: ''; position: absolute;
+        bottom: -10px; left: 0; width: 60px; height: 2px;
+        background: linear-gradient(90deg, var(--cyan), var(--orange));
+        border-radius: 999px; transition: width var(--transition);
+    }
+    #carrusel:hover .carousel-title::after { width: 100%; }
+
+    .carousel-container {
+        position: relative; max-width: 1000px; margin: 0 auto;
+        overflow: hidden; transition: border-color 0.4s, box-shadow 0.4s, border-radius 0.4s;
+    }
+    [data-theme="dark"] .carousel-container {
+        border: 1px solid var(--border-dim);
+        clip-path: var(--clip-corner);
+        box-shadow: 0 30px 80px rgba(0,0,0,0.6), var(--glow-cyan);
+    }
+    [data-theme="light"] .carousel-container {
+        border: 1px solid rgba(255,255,255,0.8);
+        border-radius: 24px;
+        box-shadow: 0 24px 80px rgba(61,79,255,0.18), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .carousel-track { position: relative; height: 520px; }
+
+    .carousel-slide {
+        position: absolute; inset: 0;
+        opacity: 0; transition: opacity var(--transition-time) ease; z-index: 0;
+    }
+    .carousel-slide.active { opacity: 1; z-index: 1; }
+
+    .slide-content { position: relative; width: 100%; height: 100%; overflow: hidden; }
+
+    .carousel-slide img {
+        width: 100%; height: 100%; object-fit: cover;
+        filter: brightness(0.65) saturate(0.85);
+        transition: filter var(--transition-time) ease;
+    }
+    .carousel-slide.active img { filter: brightness(0.85) saturate(1); }
+
+    /* Slides de VIDEO */
+    .carousel-slide video {
+        width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+
+    .caption {
+        position: absolute; bottom: 0; left: 0; right: 0; padding: 2.5rem;
+        transform: translateY(10px); opacity: 0;
+        transition: all calc(var(--transition-time) + 0.15s) ease;
+    }
+    [data-theme="dark"] .caption {
+        background: linear-gradient(to top, rgba(5,8,16,0.95) 0%, rgba(5,8,16,0.6) 60%, transparent 100%);
+    }
+    [data-theme="light"] .caption {
+        background: linear-gradient(to top, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.7) 55%, transparent 100%);
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    .carousel-slide.active .caption { transform: translateY(0); opacity: 1; }
+
+    .caption h3 {
+        font-family: 'Orbitron', monospace; font-size: 1.4rem;
+        font-weight: 700; margin-bottom: 0.5rem;
+        background: linear-gradient(90deg, var(--cyan), var(--orange));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .caption p { font-size: 0.92rem; line-height: 1.55; max-width: 600px; color: var(--text-mid); }
+
+    .carousel-control {
+        position: absolute; top: 50%; transform: translateY(-50%);
+        width: 44px; height: 44px;
+        border: 1px solid var(--border-glow);
+        color: var(--cyan); display: flex; align-items: center; justify-content: center;
+        cursor: pointer; z-index: 10; transition: all var(--transition);
+    }
+    [data-theme="dark"] .carousel-control {
+        background: rgba(0,229,255,0.08);
+        backdrop-filter: blur(8px);
+        clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+    [data-theme="light"] .carousel-control {
+        background: rgba(255,255,255,0.8);
+        backdrop-filter: blur(12px);
+        border-radius: 50%; clip-path: none;
+        box-shadow: 0 4px 16px rgba(100,130,200,0.2);
+        color: var(--cyan);
+    }
+    .carousel-control:hover {
+        background: rgba(0,229,255,0.2);
+        box-shadow: var(--glow-cyan);
+        transform: translateY(calc(-50% - 2px));
+    }
+    [data-theme="light"] .carousel-control:hover { background: rgba(255,255,255,0.95); }
+    .carousel-control svg { width: 20px; height: 20px; }
+    .prev { left: 1.5rem; }
+    .next { right: 1.5rem; }
+
+    .carousel-indicators {
+        position: absolute; bottom: 1.2rem; left: 50%; transform: translateX(-50%);
+        display: flex; gap: 0.5rem; z-index: 10; flex-wrap: wrap; justify-content: center;
+    }
+    .indicator {
+        height: 3px; border-radius: 999px; border: none; cursor: pointer;
+        background: rgba(255,255,255,0.25); padding: 0;
+        transition: all 0.3s ease; width: 24px;
+    }
+    .indicator.active {
+        background: var(--cyan); width: 40px;
+        box-shadow: 0 0 8px var(--cyan);
+    }
+    .indicator:hover:not(.active) { background: rgba(255,255,255,0.5); }
+
+    /* ============================================================
+       CONTACT
+    ============================================================ */
+    .contact-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(260px,100%),1fr));
+        gap: 2rem; margin-top: 2.5rem;
+    }
+    .contact-method { display: flex; align-items: flex-start; gap: 1.25rem; margin-bottom: 1.75rem; }
+    .contact-icon { font-size: 1.6rem; color: var(--orange); margin-top: 0.2rem; flex-shrink: 0; }
+    .contact-details h4 {
+        font-family: 'Orbitron', monospace; color: var(--cyan);
+        margin-bottom: 0.4rem; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;
+    }
+    .contact-details p { color: var(--text-mid); font-size: 0.95rem; }
+    .contact-form { margin-top: 3.5rem; }
+    .form-group { margin-bottom: 1.75rem; }
+    label {
+        display: block; font-family: 'Orbitron', monospace;
+        color: var(--text-dim); margin-bottom: 0.6rem;
+        font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.78rem;
+    }
+    input, textarea {
+        width: 100%; padding: 1rem 1.25rem;
+        color: var(--text-bright); font-family: 'Rajdhani', sans-serif;
+        font-size: 1rem; font-weight: 500; outline: none;
+        transition: all var(--transition);
+    }
+    [data-theme="dark"] input, [data-theme="dark"] textarea {
+        background: var(--bg-deep); border: 1px solid var(--border-dim);
+        border-bottom: 2px solid var(--border-dim);
+        clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+    [data-theme="dark"] input:focus, [data-theme="dark"] textarea:focus {
+        border-color: var(--border-glow); border-bottom-color: var(--cyan);
+        box-shadow: 0 4px 20px rgba(0,229,255,0.1);
+    }
+    [data-theme="light"] input, [data-theme="light"] textarea {
+        background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.8); border-bottom: 2px solid rgba(61,79,255,0.15);
+        border-radius: 12px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(100,130,200,0.08);
+    }
+    [data-theme="light"] input:focus, [data-theme="light"] textarea:focus {
+        background: rgba(255,255,255,0.92); border-bottom-color: var(--cyan);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), 0 4px 20px rgba(61,79,255,0.15);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-dim); }
+    textarea { min-height: 140px; resize: vertical; }
+
+    /* ============================================================
+       SOCIAL LINKS
+    ============================================================ */
+    .social-links { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+    .social-links a {
+        font-size: 1.5rem; transition: all var(--transition); padding: 0.5rem;
+        display: flex; align-items: center; justify-content: center;
+    }
+    [data-theme="dark"] .social-links a { color: var(--text-dim); }
+    [data-theme="dark"] .social-links a:hover { color: var(--cyan); text-shadow: 0 0 15px rgba(0,229,255,0.8); transform: translateY(-4px); }
+    [data-theme="light"] .social-links a {
+        color: var(--text-light); background: rgba(255,255,255,0.6);
+        border: 1px solid rgba(255,255,255,0.8); border-radius: 8px;
+        width: 42px; height: 42px;
+        box-shadow: 0 2px 8px rgba(100,130,200,0.1);
+    }
+    [data-theme="light"] .social-links a:hover {
+        color: var(--cyan); background: rgba(255,255,255,0.95);
+        transform: translateY(-3px); box-shadow: 0 6px 20px rgba(61,79,255,0.2);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+        padding: 4rem 0 2rem; margin-top: 4rem;
+        border-top: 1px solid var(--border-dim);
+        transition: background 0.4s, border-color 0.4s;
+    }
+    [data-theme="dark"] footer {
+        background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-void) 100%);
+    }
+    [data-theme="light"] footer {
+        background: linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(240,244,255,0.85) 100%);
+        backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 -8px 40px rgba(100,130,200,0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    footer::before {
+        content: ''; display: block;
+        height: 1px; margin: 0 0 0;
+        background: linear-gradient(90deg, transparent, var(--cyan) 30%, var(--orange) 70%, transparent);
+        opacity: 0.4;
+    }
+    .footer-content {
+        max-width: 1400px; margin: 0 auto; padding: 3rem 2rem 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(220px,100%),1fr));
+        gap: 2.5rem;
+    }
+    .footer-section h3 {
+        font-family: 'Orbitron', monospace; color: var(--orange);
+        font-size: 0.95rem; margin-bottom: 1.25rem;
+        text-transform: uppercase; letter-spacing: 2px;
+    }
+    .footer-section p { color: var(--text-mid); font-size: 0.92rem; line-height: 1.65; }
+    .footer-section ul { list-style: none; }
+    .footer-section ul li { margin-bottom: 0.6rem; font-size: 0.88rem; color: var(--text-mid); }
+    .footer-section ul li a { color: var(--text-dim); text-decoration: none; transition: color var(--transition); }
+    .footer-section ul li a:hover { color: var(--cyan); }
+    .copyright {
+        text-align: center; margin-top: 2.5rem; padding: 1.5rem 1rem 0;
+        border-top: 1px solid var(--border-dim);
+        color: var(--text-dim); font-family: 'Orbitron', monospace;
+        font-size: 0.68rem; letter-spacing: 1.5px;
+    }
+
+    /* ============================================================
+       ANIMACIONES DE ENTRADA
+    ============================================================ */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .service-card { animation: fadeInUp 0.5s ease-out both; }
+    .project-card { animation: fadeInUp 0.5s ease-out both; }
+    .service-card:nth-child(1) { animation-delay: 0.05s; }
+    .service-card:nth-child(2) { animation-delay: 0.10s; }
+    .service-card:nth-child(3) { animation-delay: 0.15s; }
+    .service-card:nth-child(4) { animation-delay: 0.20s; }
+    .service-card:nth-child(5) { animation-delay: 0.25s; }
+    .service-card:nth-child(6) { animation-delay: 0.30s; }
+
+    /* ============================================================
+       MOBILE CURSOR (dark only)
+    ============================================================ */
+    .mobile-cursor { display: none; }
+
+    /* ============================================================
+       RESPONSIVE — 1200px
+    ============================================================ */
+    @media (max-width: 1200px) {
+        .logo { font-size: 2.8rem; letter-spacing: 5px; }
+        .hero h1 { font-size: 2.6rem; }
+        h2 { font-size: 2rem; }
+        section { padding: 3rem; }
+    }
+
+    /* ============================================================
+       RESPONSIVE — 1024px
+    ============================================================ */
+    @media (max-width: 1024px) {
+        .logo { font-size: 2.2rem; letter-spacing: 3px; }
+        .tagline { font-size: 0.9rem; }
+        nav a { font-size: 0.72rem; padding: 1.2rem 1rem; letter-spacing: 1px; }
+        .hero h1 { font-size: 2rem; }
+        section { padding: 2.5rem; }
+        [data-theme="dark"] section { clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px)); }
+        .services-grid { grid-template-columns: repeat(2,1fr); }
+        .projects-container { grid-template-columns: repeat(2,1fr); }
+        .carousel-track { height: 420px; }
+        .footer-content { grid-template-columns: repeat(2,1fr); }
+    }
+
+    /* ============================================================
+       RESPONSIVE — 768px  (SIDEBAR activa)
+    ============================================================ */
+    @media (max-width: 768px) {
+        /* Sidebar mode */
+        .menu-toggle { display: flex; }
+        nav ul { display: none !important; }  /* siempre oculto en mobile */
+        .theme-switch { display: none; }      /* se mueve al sidebar footer */
+        .sidebar-overlay { display: block; }
+
+        /* Header */
+        .logo { font-size: 1.5rem; letter-spacing: 2px; }
+        .tagline { font-size: 0.72rem; letter-spacing: 1px; }
+
+        /* Main */
+        main { padding: 0 0.75rem; }
+
+        /* Hero */
+        .hero { padding: 5rem 1rem 3rem; min-height: 100svh; }
+        .hero h1 { font-size: 1.5rem; letter-spacing: 1px; }
+        .hero p { font-size: 0.95rem; }
+
+        /* Sections */
+        section {
+            padding: 1.75rem 1.25rem; margin-bottom: 2.5rem;
+            clip-path: none !important; border-radius: 12px;
+        }
+        h2 { font-size: 1.4rem; letter-spacing: 1px; }
+
+        /* Services */
+        .services-grid { grid-template-columns: 1fr; gap: 1rem; }
+        .service-card {
+            clip-path: none !important; border-radius: 12px; padding: 1.5rem;
+        }
+
+        /* Projects */
+        .projects-container { grid-template-columns: 1fr; gap: 1.25rem; }
+        .project-card { clip-path: none !important; border-radius: 12px; }
+        .project-image { height: 200px; }
+        .project-info { padding: 1.25rem; }
+        .project-info h3 { font-size: 0.95rem; }
+        .tech-tag { clip-path: none !important; border-radius: 4px; font-size: 0.7rem; }
+
+        /* Carousel */
+        #carrusel { padding: 2rem 0.75rem 3rem; }
+        .carousel-container { clip-path: none !important; border-radius: 12px; }
+        .carousel-track { height: 300px; }
+        .caption { padding: 1.25rem; }
+        .caption h3 { font-size: 1.05rem; }
+        .caption p { font-size: 0.8rem; }
+        .carousel-control { width: 36px; height: 36px; clip-path: none !important; border-radius: 50%; }
+        .carousel-title { font-size: 1.4rem; letter-spacing: 1px; }
+
+        /* Contact */
+        .contact-info { grid-template-columns: 1fr; }
+        input, textarea { clip-path: none !important; border-radius: 10px; }
+
+        /* Footer */
+        footer { padding: 2rem 0 1.5rem; }
+        .footer-content { grid-template-columns: 1fr; padding: 1.5rem 1.25rem 0; gap: 1.5rem; }
+        .copyright { font-size: 0.62rem; padding: 1rem 1rem 0; }
+        .btn { clip-path: none !important; border-radius: 6px; padding: 0.8rem 1.75rem; }
+    }
+
+    /* ============================================================
+       RESPONSIVE — 480px
+    ============================================================ */
+    @media (max-width: 480px) {
+        header { padding: 1.5rem 0; }
+        .header-content { padding: 0 1rem; }
+        .logo { font-size: 1.2rem; letter-spacing: 1px; }
+        .tagline { font-size: 0.65rem; }
+        .hero { padding: 4.5rem 0.75rem 2.5rem; }
+        .hero h1 { font-size: 1.2rem; }
+        section { padding: 1.25rem 0.9rem; }
+        h2 { font-size: 1.1rem; }
+        .carousel-track { height: 240px; }
+        .caption p { display: none; }
+        .indicator { width: 16px; }
+        .indicator.active { width: 28px; }
+    }
+
+    @media (max-width: 360px) {
+        .logo { font-size: 1rem; letter-spacing: 0; }
+        .hero h1 { font-size: 1rem; }
+        h2 { font-size: 0.95rem; }
+        .carousel-track { height: 190px; }
+    }
+
+    @media (hover: none) {
+        .service-card:hover, .project-card:hover { transform: none; }
+        .btn:hover { transform: none; }
+        .social-links a:hover { transform: none; }
+    }
+
+    @media (max-width: 768px) and (orientation: landscape) {
+        .hero { min-height: 100svh; padding: 4rem 2rem 2rem; }
+        .hero h1 { font-size: 1.3rem; }
+        .carousel-track { height: 260px; }
+    }
+    </style>
 </head>
 <body>
     <div class="circuit-bg"></div>
     <div class="circuit-lines"></div>
 
+    <!-- ================================================
+         SIDEBAR MÓVIL
+    ================================================ -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-logo">Ivality</span>
+            <button class="sidebar-close" id="sidebar-close" aria-label="Cerrar menú">✕</button>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li>
+                    <a href="#inicio" class="sidebar-link">
+                        <i class="fas fa-home nav-icon"></i>
+                        Inicio
+                    </a>
+                </li>
+                <li>
+                    <a href="#servicios" class="sidebar-link">
+                        <i class="fas fa-layer-group nav-icon"></i>
+                        Servicios
+                    </a>
+                </li>
+                <li>
+                    <a href="#tecnologias" class="sidebar-link">
+                        <i class="fas fa-microchip nav-icon"></i>
+                        Tecnologías
+                    </a>
+                </li>
+                <li>
+                    <a href="#proyectos" class="sidebar-link">
+                        <i class="fas fa-th-large nav-icon"></i>
+                        Proyectos
+                    </a>
+                </li>
+                <li>
+                    <a href="#carrusel" class="sidebar-link">
+                        <i class="fas fa-images nav-icon"></i>
+                        Galería
+                    </a>
+                </li>
+                <li>
+                    <a href="#contacto" class="sidebar-link">
+                        <i class="fas fa-envelope nav-icon"></i>
+                        Contacto
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <span class="sidebar-theme-label">Tema</span>
+            <button class="theme-switch" id="theme-switch-sidebar" aria-label="Cambiar tema">
+                <span class="switch-icon sun">☀</span>
+                <span class="switch-track"><span class="switch-knob"></span></span>
+                <span class="switch-icon moon">☾</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ================================================
+         HEADER
+    ================================================ -->
     <header>
         <div class="header-content">
             <div class="logo">ESTUDIOS IVALITY</div>
@@ -24,43 +1273,58 @@
         </div>
     </header>
 
+    <!-- ================================================
+         NAV DESKTOP
+    ================================================ -->
     <nav>
-    <div class="menu-toggle" id="menu-toggle">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-    <ul id="nav-menu">
-        <li><a href="#inicio">Inicio</a></li>
-        <li><a href="#servicios">Servicios</a></li>
-        <li><a href="#tecnologias">Tecnologías</a></li>
-        <li><a href="#proyectos">Proyectos</a></li>
-        <li><a href="#contacto">Contacto</a></li>
-    </ul>
-</nav>
+        <div class="nav-inner">
+            <!-- Hamburger (visible en mobile) -->
+            <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+                <span></span><span></span><span></span>
+            </button>
 
+            <ul id="nav-menu">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#tecnologias">Tecnologías</a></li>
+                <li><a href="#proyectos">Proyectos</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
 
+            <!-- Switch tema (desktop) -->
+            <button class="theme-switch" id="theme-switch-desktop" aria-label="Cambiar tema">
+                <span class="switch-icon sun">☀</span>
+                <span class="switch-track"><span class="switch-knob"></span></span>
+                <span class="switch-icon moon">☾</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ================================================
+         MAIN
+    ================================================ -->
     <main>
+
+        <!-- HERO -->
         <section id="inicio" class="hero">
             <div class="hero-content">
                 <h1>Transformamos Ideas en Soluciones Interactivas</h1>
                 <p>En Estudios Ivality combinamos creatividad y tecnología para construir soluciones digitales innovadoras.</p>
                 <ul class="intro-list">
-                    <li>🎨 Diseño y programación de páginas web modernas y responsivas.</li>
-                    <li>🎮 Desarrollo de videojuegos y simuladores en entornos 3D.</li>
-                    <li>🕶️ Creación de experiencias inmersivas en realidad virtual.</li>
-                    <li>🧭 Recorridos digitales interactivos para empresas, espacios o productos.</li>
-                    <li>📸 Diseño gráfico y contenido visual de alto impacto.</li>
+                    <li>Diseño y programación de páginas web modernas y responsivas.</li>
+                    <li>Desarrollo de videojuegos y simuladores en entornos 3D.</li>
+                    <li>Creación de experiencias inmersivas en realidad virtual.</li>
+                    <li>Recorridos digitales interactivos para empresas, espacios o productos.</li>
+                    <li>Diseño gráfico y contenido visual de alto impacto.</li>
                 </ul>
                 <a href="#contacto" class="btn">Iniciar Proyecto</a>
             </div>
         </section>
 
-
+        <!-- SERVICIOS -->
         <section id="servicios">
             <h2>Nuestros Servicios</h2>
-            <p>En Estudios Ivality desarrollamos soluciones tecnológicas y visuales a medida que impulsan la transformación digital de empresas, instituciones y marcas. Integramos creatividad, funcionalidad y tecnología para ofrecer resultados innovadores y efectivos.</p>
-
+            <p>Desarrollamos soluciones tecnológicas y visuales a medida que impulsan la transformación digital de empresas, instituciones y marcas. Integramos creatividad, funcionalidad y tecnología para ofrecer resultados innovadores y efectivos.</p>
             <div class="services-grid">
                 <div class="service-card">
                     <i class="fas fa-globe service-icon"></i>
@@ -73,7 +1337,6 @@
                         <li>Integración con formularios y bases de datos</li>
                     </ul>
                 </div>
-
                 <div class="service-card">
                     <i class="fas fa-vr-cardboard service-icon"></i>
                     <h3>Realidad Virtual</h3>
@@ -85,7 +1348,6 @@
                         <li>Compatibilidad con Oculus y PC</li>
                     </ul>
                 </div>
-
                 <div class="service-card">
                     <i class="fas fa-gamepad service-icon"></i>
                     <h3>Videojuegos y Simuladores</h3>
@@ -97,7 +1359,6 @@
                         <li>Exportación multiplataforma</li>
                     </ul>
                 </div>
-
                 <div class="service-card">
                     <i class="fas fa-pencil-ruler service-icon"></i>
                     <h3>Diseño Gráfico y Multimedia</h3>
@@ -112,42 +1373,36 @@
             </div>
         </section>
 
-
+        <!-- TECNOLOGÍAS -->
         <section id="tecnologias">
             <h2>Tecnologías Clave</h2>
             <p>Trabajamos con herramientas profesionales de desarrollo, diseño y simulación que nos permiten crear soluciones innovadoras, robustas y de alto impacto para la industria, la educación y el entretenimiento.</p>
-
             <div class="services-grid">
                 <div class="service-card">
                     <i class="fas fa-code service-icon"></i>
                     <h3>Visual Studio Code</h3>
                     <p>Entorno de desarrollo ligero y versátil para la creación eficiente de páginas web, aplicaciones y scripts interactivos.</p>
                 </div>
-
                 <div class="service-card">
                     <i class="fas fa-server service-icon"></i>
                     <h3>XAMPP & MySQL</h3>
                     <p>Plataforma de desarrollo local con gestión de bases de datos para aplicaciones web dinámicas y sistemas a medida.</p>
                 </div>
-
                 <div class="service-card">
                     <i class="fas fa-cube service-icon"></i>
                     <h3>Unity 3D</h3>
                     <p>Motor gráfico de alto rendimiento para la creación de videojuegos, simuladores industriales y experiencias en realidad virtual.</p>
                 </div>
-
                 <div class="service-card">
                     <i class="fas fa-drafting-compass service-icon"></i>
                     <h3>Autodesk Maya</h3>
                     <p>Modelado y animación 3D profesional para el desarrollo de personajes, escenarios y elementos visuales interactivos.</p>
                 </div>
-
                 <div class="service-card">
                     <i class="fas fa-paint-brush service-icon"></i>
                     <h3>Adobe Creative Cloud</h3>
                     <p>Suite de diseño gráfico y edición multimedia para el desarrollo de contenido visual, branding y producción audiovisual.</p>
                 </div>
-
                 <div class="service-card">
                     <i class="fas fa-database service-icon"></i>
                     <h3>HTML, CSS, JavaScript & PHP</h3>
@@ -156,352 +1411,439 @@
             </div>
         </section>
 
-
+        <!-- PROYECTOS -->
         <section id="proyectos">
-  <h2>Proyectos Destacados</h2>
-  <p>Soluciones reales entregadas a clientes en distintos sectores. Cada proyecto refleja nuestra capacidad técnica, diseño funcional y orientación a resultados.</p>
+            <h2>Proyectos Destacados</h2>
+            <p>Soluciones reales entregadas a clientes en distintos sectores. Cada proyecto refleja nuestra capacidad técnica, diseño funcional y orientación a resultados.</p>
+            <div class="projects-container">
 
-  <div class="projects-container">
+                <div class="project-card">
+                    <div class="project-video">
+                        <video autoplay muted loop playsinline poster="assets/apce_mx.png">
+                            <source src="assets/apce_video.mp4" type="video/mp4">
+                            <img src="assets/apce_mx.png" alt="apce.mx">
+                        </video>
+                    </div>
+                    <div class="project-info">
+                        <h3>apce.mx — Sitio Web Corporativo</h3>
+                        <p>Sitio web profesional de alto impacto para distribuidor autorizado de lubricantes Petro-Canada en México. Diseño oscuro con secciones de productos industriales, asesoría técnica, análisis de lubricación y blog B2B.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Desarrollo Web</span>
+                            <span class="tech-tag">B2B</span>
+                            <span class="tech-tag">Industrial</span>
+                            <span class="tech-tag">UX/UI</span>
+                        </div>
+                        <a href="https://apce.mx" target="_blank" class="btn">Ver sitio</a>
+                    </div>
+                </div>
 
-    <!-- Proyecto apce.mx -->
-    <div class="project-card">
-      <div class="project-video">
-        <video width="100%" height="250" autoplay muted loop playsinline poster="assets/apce_mx.png" style="object-fit:cover; display:block; background:#0a0f1c;">
-          <source src="assets/apce_video.mp4" type="video/mp4">
-          <img src="assets/apce_mx.png" alt="apce.mx - Sitio Web Corporativo" style="width:100%;height:250px;object-fit:cover;">
-        </video>
-      </div>
-      <div class="project-info">
-        <h3>apce.mx — Sitio Web Corporativo</h3>
-        <p>Sitio web profesional de alto impacto para distribuidor autorizado de lubricantes Petro-Canada en México. Diseño oscuro con secciones de productos industriales (Duron, Hydrex, Sentron, Turboflo), industrias atendidas, asesoría técnica, análisis de lubricación y blog. Optimizado para posicionamiento B2B y generación de leads industriales con más de 20 años de experiencia respaldando la marca.</p>
-        <div class="tech-tags">
-          <span class="tech-tag">Desarrollo Web</span>
-          <span class="tech-tag">B2B</span>
-          <span class="tech-tag">Industrial</span>
-          <span class="tech-tag">UX/UI</span>
-        </div>
-        <a href="https://apce.mx" target="_blank" class="btn">Ver sitio</a>
-      </div>
-    </div>
+                <div class="project-card">
+                    <div class="project-video">
+                        <video autoplay muted loop playsinline>
+                            <source src="assets/SISCA2.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="project-info">
+                        <h3>Proyecto SISCA</h3>
+                        <p>Sistema de Carga Académica para la gestión integral de horarios, asignaturas y personal docente. Diseñado para optimizar la planificación semestral en instituciones educativas de nivel superior.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Web</span>
+                            <span class="tech-tag">Automatización</span>
+                            <span class="tech-tag">UX/UI</span>
+                        </div>
+                        <a href="#" class="btn">Ver más</a>
+                    </div>
+                </div>
 
-    <!-- Proyecto SISCA -->
-    <div class="project-card">
-      <div class="project-video">
-        <iframe width="100%" height="250" src="assets/SISCA2.mp4" title="Proyecto SISCA" frameborder="0" allowfullscreen></iframe>
-      </div>
-      <div class="project-info">
-        <h3>Proyecto SISCA</h3>
-        <p>Sistema de Carga Académica desarrollado para facilitar la gestión de horarios, asignaturas y personal docente, promoviendo la eficiencia académica en instituciones educativas.</p>
-        <div class="tech-tags">
-          <span class="tech-tag">Web</span>
-          <span class="tech-tag">Automatización</span>
-          <span class="tech-tag">UX/UI</span>
-        </div>
-        <a href="#" class="btn">Ver más</a>
-      </div>
-    </div>
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('assets/ventapro_dashboard.png'); background-size: cover; background-position: center;"></div>
+                    <div class="project-info">
+                        <h3>VentaPRO — Sistema de Punto de Venta</h3>
+                        <p>Sistema POS completo con dashboard analítico en tiempo real: ventas del día, ticket promedio, ítems vendidos y clientes activos. Top 5 productos y módulo de cobro con generación de ticket. Total procesado: $113,387 MXN.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Sistema Web</span>
+                            <span class="tech-tag">POS</span>
+                            <span class="tech-tag">Dashboard</span>
+                        </div>
+                        <a href="#" class="btn">Ver más</a>
+                    </div>
+                </div>
 
-    <!-- VentaPRO -->
-    <div class="project-card">
-      <div class="project-image" style="background-image: url('assets/ventapro_dashboard.png'); background-size: cover; background-position: center;"></div>
-      <div class="project-info">
-        <h3>VentaPRO — Sistema de Punto de Venta</h3>
-        <p>Sistema POS completo con dashboard analítico en tiempo real: ventas del día, ticket promedio, ítems vendidos y clientes activos. Incluye gráficas por hora y semana, top 5 productos y módulo de cobro con generación de ticket. Total procesado: $113,387 MXN en 28 ventas.</p>
-        <div class="tech-tags">
-          <span class="tech-tag">Sistema Web</span>
-          <span class="tech-tag">POS</span>
-          <span class="tech-tag">Dashboard</span>
-        </div>
-        <a href="#" class="btn">Ver más</a>
-      </div>
-    </div>
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('assets/sistema_upa.png'); background-size: cover; background-position: center;"></div>
+                    <div class="project-info">
+                        <h3>Sistema UPA — Portal Académico Universitario</h3>
+                        <p>Portal institucional completo para la Universidad de Pedagogía Aplicada. Gestión de alumnos, docentes, grupos, asignaturas y calificaciones. Control de roles y accesos, carga masiva desde Excel y plantillas de documentos oficiales.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Sistema Web</span>
+                            <span class="tech-tag">Educación</span>
+                            <span class="tech-tag">Multi-rol</span>
+                        </div>
+                        <a href="#" class="btn">Ver más</a>
+                    </div>
+                </div>
 
-    <!-- Sistema UPA -->
-    <div class="project-card">
-      <div class="project-image" style="background-image: url('assets/sistema_upa.png'); background-size: cover; background-position: center;"></div>
-      <div class="project-info">
-        <h3>Sistema UPA — Portal Académico Universitario</h3>
-        <p>Portal institucional completo para la Universidad de Pedagogía Aplicada. Gestión de alumnos, docentes, grupos, asignaturas y calificaciones. Control de roles y accesos, carga masiva desde Excel y plantillas de documentos oficiales.</p>
-        <div class="tech-tags">
-          <span class="tech-tag">Sistema Web</span>
-          <span class="tech-tag">Educación</span>
-          <span class="tech-tag">Multi-rol</span>
-        </div>
-        <a href="#" class="btn">Ver más</a>
-      </div>
-    </div>
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('assets/flextec.png'); background-size: cover; background-position: center;"></div>
+                    <div class="project-info">
+                        <h3>FLEX-TEC — Sistema de Inventario Industrial</h3>
+                        <p>Sistema de gestión de inventario para empresa automotriz-industrial. 276 productos activos, 243,513 unidades en racks. Módulos de inventario, entradas, salidas, calidad, pallets y embarques. Interfaz bilingüe ES/EN.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Sistema Web</span>
+                            <span class="tech-tag">Industrial</span>
+                            <span class="tech-tag">Automotriz</span>
+                        </div>
+                        <a href="#" class="btn">Ver más</a>
+                    </div>
+                </div>
 
-    <!-- FLEX-TEC -->
-    <div class="project-card">
-      <div class="project-image" style="background-image: url('assets/flextec.png'); background-size: cover; background-position: center;"></div>
-      <div class="project-info">
-        <h3>FLEX-TEC — Sistema de Inventario Industrial</h3>
-        <p>Sistema de gestión de inventario para empresa del sector automotriz-industrial. 276 productos activos, 243,513 unidades distribuidas en racks. Módulos de inventario, entradas, salidas, clasificación, calidad, pallets y embarques. Interfaz bilingüe (ES/EN).</p>
-        <div class="tech-tags">
-          <span class="tech-tag">Sistema Web</span>
-          <span class="tech-tag">Industrial</span>
-          <span class="tech-tag">Automotriz</span>
-        </div>
-        <a href="#" class="btn">Ver más</a>
-      </div>
-    </div>
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('assets/battle_nexus.jpg'); background-size: cover; background-position: center;"></div>
+                    <div class="project-info">
+                        <h3>Battle Nexus: Convergence — Videojuego de Pelea 3D</h3>
+                        <p>Juego de pelea en entorno urbano cyberpunk con personajes 3D animados. Modos Historia, Versus y Opciones. Personajes con modelado y rigging propios, escenarios y efectos de iluminación personalizados en Unity.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Videojuego</span>
+                            <span class="tech-tag">3D</span>
+                            <span class="tech-tag">PC</span>
+                        </div>
+                        <a href="#" class="btn">Ver más</a>
+                    </div>
+                </div>
 
-    <!-- Battle Nexus -->
-    <div class="project-card">
-      <div class="project-image" style="background-image: url('assets/battle_nexus.jpg'); background-size: cover; background-position: center;"></div>
-      <div class="project-info">
-        <h3>Battle Nexus: Convergence — Videojuego de Pelea 3D</h3>
-        <p>Juego de pelea en entorno urbano cyberpunk con personajes 3D animados. Incluye modos Historia, Versus y Opciones. Personajes con modelado y rigging propios, escenarios y efectos de iluminación personalizados desarrollados en motor de videojuegos.</p>
-        <div class="tech-tags">
-          <span class="tech-tag">Videojuego</span>
-          <span class="tech-tag">3D</span>
-          <span class="tech-tag">PC</span>
-        </div>
-        <a href="#" class="btn">Ver más</a>
-      </div>
-    </div>
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('assets/exodo_terrestre.png'); background-size: cover; background-position: center;"></div>
+                    <div class="project-info">
+                        <h3>Éxodo Terrestre — Space Shooter Arcade</h3>
+                        <p>Videojuego de naves espaciales con 5 clases (Explorer, Spider, Destiny, Raven, Odisea), cada una con estadísticas únicas. Desarrollado en Python con pantalla de selección de nave y modo arcade ejecutable sin servidor.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Videojuego</span>
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Arcade</span>
+                        </div>
+                        <a href="#" class="btn">Ver más</a>
+                    </div>
+                </div>
 
-    <!-- Éxodo Terrestre -->
-    <div class="project-card">
-      <div class="project-image" style="background-image: url('assets/exodo_terrestre.png'); background-size: cover; background-position: center;"></div>
-      <div class="project-info">
-        <h3>Éxodo Terrestre — Space Shooter Arcade</h3>
-        <p>Videojuego de naves espaciales con 5 clases (Explorer, Spider, Destiny, Raven, Odisea), cada una con estadísticas únicas de velocidad y potencia. Desarrollado en Python con interfaz gráfica, pantalla de selección de nave y modo arcade ejecutable sin servidor.</p>
-        <div class="tech-tags">
-          <span class="tech-tag">Videojuego</span>
-          <span class="tech-tag">Python</span>
-          <span class="tech-tag">Arcade</span>
-        </div>
-        <a href="#" class="btn">Ver más</a>
-      </div>
-    </div>
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('assets/modelo3d_vehiculo.jpg'); background-size: cover; background-position: center;"></div>
+                    <div class="project-info">
+                        <h3>Modelado 3D Avanzado — Vehículos y Personajes</h3>
+                        <p>Proyectos de modelado 3D en Autodesk Maya. Vehículo de alta complejidad geométrica renderizado en 4 vistas con texturas realistas. Guerrero con modelado anatómico detallado, armadura, rigging y preparación para animación.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Modelado 3D</span>
+                            <span class="tech-tag">Maya</span>
+                            <span class="tech-tag">Animación</span>
+                        </div>
+                        <a href="#" class="btn">Ver más</a>
+                    </div>
+                </div>
 
-    <!-- Modelado 3D -->
-    <div class="project-card">
-      <div class="project-image" style="background-image: url('assets/modelo3d_vehiculo.jpg'); background-size: cover; background-position: center;"></div>
-      <div class="project-info">
-        <h3>Modelado 3D Avanzado — Vehículos y Personajes</h3>
-        <p>Proyectos de modelado 3D avanzado en Autodesk Maya. Vehículo de alta complejidad geométrica renderizado en 4 vistas con texturas realistas. Personaje de guerrero con modelado anatómico detallado, armadura, rigging y preparación para animación y videojuegos.</p>
-        <div class="tech-tags">
-          <span class="tech-tag">Modelado 3D</span>
-          <span class="tech-tag">Maya</span>
-          <span class="tech-tag">Animación</span>
-        </div>
-        <a href="#" class="btn">Ver más</a>
-      </div>
-    </div>
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('assets/maquinados.png'); background-size: cover; background-position: top;"></div>
+                    <div class="project-info">
+                        <h3>Sistema de Cotización — Maquinados Industriales</h3>
+                        <p>Herramienta de cotización automatizada para talleres de maquinado industrial. Calcula costos de materia prima, horas hombre, depreciación de maquinaria y costo financiero con tasa de crédito del 34% anual.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Automatización</span>
+                            <span class="tech-tag">Excel</span>
+                            <span class="tech-tag">Industria</span>
+                        </div>
+                        <a href="#" class="btn">Ver más</a>
+                    </div>
+                </div>
 
-    <!-- Maquinados Industriales -->
-    <div class="project-card">
-      <div class="project-image" style="background-image: url('assets/maquinados.png'); background-size: cover; background-position: top;"></div>
-      <div class="project-info">
-        <h3>Sistema de Cotización — Maquinados Industriales</h3>
-        <p>Herramienta de cotización automatizada para talleres de maquinado industrial. Calcula costos de materia prima, tratamiento y herramientas por rango de ganancia, horas hombre, depreciación de maquinaria y costo financiero con tasa de crédito (34% anual).</p>
-        <div class="tech-tags">
-          <span class="tech-tag">Automatización</span>
-          <span class="tech-tag">Excel</span>
-          <span class="tech-tag">Industria</span>
-        </div>
-        <a href="#" class="btn">Ver más</a>
-      </div>
-    </div>
+                <div class="project-card placeholder">
+                    <div class="project-image" style="background-color: var(--bg-deep); display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-tools" style="font-size:4rem; color:var(--cyan); opacity:0.3;"></i>
+                    </div>
+                    <div class="project-info">
+                        <h3>En construcción...</h3>
+                        <p>Estamos trabajando en proyectos innovadores. Muy pronto podrás ver aquí nuestras implementaciones reales con tecnologías de vanguardia.</p>
+                        <div class="tech-tags">
+                            <span class="tech-tag">IoT</span>
+                            <span class="tech-tag">IA</span>
+                            <span class="tech-tag">Web</span>
+                            <span class="tech-tag">XR</span>
+                        </div>
+                        <a href="#" class="btn disabled">Próximamente</a>
+                    </div>
+                </div>
 
-    <!-- Tarjeta placeholder -->
-    <div class="project-card placeholder">
-      <div class="project-image" style="background-color: #1a1f2c; display: flex; align-items: center; justify-content: center;">
-        <i class="fas fa-tools" style="font-size: 4rem; color: #00e5ff; opacity:0.4;"></i>
-      </div>
-      <div class="project-info">
-        <h3>En construcción...</h3>
-        <p>Estamos trabajando en proyectos innovadores. Muy pronto podrás ver aquí nuestras implementaciones reales con tecnologías de vanguardia.</p>
-        <div class="tech-tags">
-          <span class="tech-tag">IoT</span>
-          <span class="tech-tag">IA</span>
-          <span class="tech-tag">Web</span>
-          <span class="tech-tag">XR</span>
-        </div>
-        <a href="#" class="btn disabled">Próximamente</a>
-      </div>
-    </div>
-
-  </div>
+            </div>
         </section>
 
+        <!-- GALERÍA / CARRUSEL -->
+        <section id="carrusel">
+            <div class="carousel-header">
+                <h2 class="carousel-title">Galería de Proyectos</h2>
+            </div>
+            <div class="carousel-container">
+                <div class="carousel-track" id="gallery-track">
 
+                    <!-- Slide 1 -->
+                    <div class="carousel-slide active">
+                        <div class="slide-content">
+                            <img src="assets/apce_mx.png" alt="apce.mx">
+                            <div class="caption">
+                                <h3>apce.mx — Sitio Web Corporativo</h3>
+                                <p>Sitio profesional para distribuidor autorizado de lubricantes Petro-Canada en México. Diseño oscuro B2B de alto impacto.</p>
+                            </div>
+                        </div>
+                    </div>
 
-<section id="carrusel">
-    <div class="carousel-header">
-    <h2 class="carousel-title">Galería de proyectos</h2>
-  </div>
-  <div class="carousel-container">
-    <div class="carousel-track" id="gallery-track">
+                    <!-- Slide 2 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/ventapro_dashboard.png" alt="VentaPRO Dashboard">
+                            <div class="caption">
+                                <h3>VentaPRO — Dashboard de Ventas</h3>
+                                <p>Panel de control con KPIs en tiempo real, gráficas de ventas por hora y semana, y top 5 productos.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 1: apce.mx -->
-      <div class="carousel-slide active">
-        <div class="slide-content">
-          <img src="assets/apce_mx.png" alt="apce.mx - Sitio Web Corporativo">
-          <div class="caption">
-            <h3>apce.mx — Sitio Web Corporativo</h3>
-            <p>Sitio profesional para distribuidor autorizado de lubricantes Petro-Canada en México. Diseño oscuro B2B de alto impacto.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 3 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/ventapro_pos.png" alt="VentaPRO POS">
+                            <div class="caption">
+                                <h3>VentaPRO — Punto de Venta</h3>
+                                <p>Sistema POS completo con carrito de compras, cobro y generación de ticket. Total procesado: $113,387 MXN.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 2: VentaPRO Dashboard -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/ventapro_dashboard.png" alt="VentaPRO Dashboard">
-          <div class="caption">
-            <h3>VentaPRO — Dashboard de Ventas</h3>
-            <p>Panel de control con KPIs en tiempo real, gráficas de ventas por hora y semana, y top 5 productos.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 4 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/ivality_ventas.png" alt="Ivality Ventas">
+                            <div class="caption">
+                                <h3>Ivality Ventas — Dashboard Analytics</h3>
+                                <p>Panel de control con ventas del día, ticket promedio, actividad por hora y ranking de productos. Modo oscuro y claro.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 3: VentaPRO Punto de Venta -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/ventapro_pos.png" alt="VentaPRO Punto de Venta">
-          <div class="caption">
-            <h3>VentaPRO — Punto de Venta</h3>
-            <p>Sistema POS completo con carrito de compras, cobro y generación de ticket. Total procesado: $113,387 MXN.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 5 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/sistema_upa.png" alt="Sistema UPA">
+                            <div class="caption">
+                                <h3>Sistema UPA — Portal Académico Universitario</h3>
+                                <p>Portal institucional completo con gestión de alumnos, docentes, calificaciones y control de roles multi-usuario.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 4: Tienda Virtual -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/ivality_ventas.png" alt="Tienda Virtual - Ivality Ventas">
-          <div class="caption">
-            <h3>Ivality Ventas — Dashboard Analytics</h3>
-            <p>Panel de control con ventas del día, ticket promedio, actividad por hora y ranking de productos. Modo oscuro y claro.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 6 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/upa_perfil.png" alt="UPA Perfil Docente">
+                            <div class="caption">
+                                <h3>Sistema UPA — Perfil de Docente</h3>
+                                <p>Tarjeta digital de perfil con matrícula, RFC, departamento y estadísticas de grupos, asignaturas y alumnos asignados.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 5: Sistema UPA -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/sistema_upa.png" alt="Sistema UPA">
-          <div class="caption">
-            <h3>Sistema UPA — Portal Académico Universitario</h3>
-            <p>Portal institucional completo con gestión de alumnos, docentes, calificaciones y control de roles multi-usuario.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 7 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/flextec.png" alt="FLEX-TEC">
+                            <div class="caption">
+                                <h3>FLEX-TEC — Sistema de Inventario Industrial</h3>
+                                <p>Gestión de 276 productos y 243,513 unidades en racks para empresa del sector automotriz. Interfaz bilingüe ES/EN.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 6: Tarjeta Digital Docente -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/upa_perfil.png" alt="Tarjeta Digital - Perfil de Docente">
-          <div class="caption">
-            <h3>Sistema UPA — Perfil de Docente</h3>
-            <p>Tarjeta digital de perfil con matrícula, RFC, departamento y estadísticas de grupos, asignaturas y alumnos asignados.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 8 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/maquinados.png" alt="Maquinados">
+                            <div class="caption">
+                                <h3>Sistema de Cotización — Maquinados Industriales</h3>
+                                <p>Herramienta automatizada para cálculo de costos de materia prima, horas hombre, depreciación de maquinaria y costo financiero.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 7: FLEX-TEC -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/flextec.png" alt="FLEX-TEC Sistema de Inventario">
-          <div class="caption">
-            <h3>FLEX-TEC — Sistema de Inventario Industrial</h3>
-            <p>Gestión de 276 productos y 243,513 unidades en racks para empresa del sector automotriz. Interfaz bilingüe ES/EN.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 9 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/exodo_terrestre.png" alt="Éxodo Terrestre">
+                            <div class="caption">
+                                <h3>Éxodo Terrestre — Space Shooter Arcade</h3>
+                                <p>Videojuego de naves con 5 clases únicas (Explorer, Spider, Destiny, Raven, Odisea) desarrollado en Python.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 8: Maquinados Industriales -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/maquinados.png" alt="Maquinados Industriales - Cotización">
-          <div class="caption">
-            <h3>Sistema de Cotización — Maquinados Industriales</h3>
-            <p>Herramienta automatizada que calcula costos de materia prima, horas hombre, depreciación de maquinaria y costo financiero.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 10 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/battle_nexus.jpg" alt="Battle Nexus">
+                            <div class="caption">
+                                <h3>Battle Nexus: Convergence — Videojuego de Pelea 3D</h3>
+                                <p>Juego de pelea cyberpunk con personajes 3D animados, modos Historia y Versus, rigging propio en Unity.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 9: Éxodo Terrestre / Videojuegos código -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/exodo_terrestre.png" alt="Éxodo Terrestre - Space Shooter">
-          <div class="caption">
-            <h3>Éxodo Terrestre — Space Shooter Arcade</h3>
-            <p>Videojuego de naves con 5 clases únicas (Explorer, Spider, Destiny, Raven, Odisea) desarrollado en Python.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 11 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/modelo3d_vehiculo.jpg" alt="Modelado 3D Vehículo">
+                            <div class="caption">
+                                <h3>Modelado 3D — Vehículo de Alta Complejidad</h3>
+                                <p>Vehículo modelado en Autodesk Maya en 4 vistas (top, perspectiva, frontal y lateral) con texturas realistas.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 10: Battle Nexus / Videojuegos -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/battle_nexus.jpg" alt="Battle Nexus: Convergence">
-          <div class="caption">
-            <h3>Battle Nexus: Convergence — Videojuego de Pelea 3D</h3>
-            <p>Juego de pelea cyberpunk con personajes 3D animados, modos Historia y Versus, rigging propio en motor de videojuegos.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 12 -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <img src="assets/modelo3d_personaje.jpg" alt="Modelado 3D Personaje">
+                            <div class="caption">
+                                <h3>Modelado 3D — Personaje con Rigging</h3>
+                                <p>Guerrero con modelado anatómico detallado, armadura, rigging y preparación completa para animación y videojuegos.</p>
+                            </div>
+                        </div>
+                    </div>
 
-      <!-- Slide 11: Diseño 3D Vehículos -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/modelo3d_vehiculo.jpg" alt="Diseño 3D Vehículos">
-          <div class="caption">
-            <h3>Modelado 3D — Vehículo de Alta Complejidad</h3>
-            <p>Vehículo modelado en Autodesk Maya renderizado en 4 vistas (top, perspectiva, frontal y lateral) con texturas realistas.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- === NUEVOS SLIDES DE VIDEO === -->
 
-      <!-- Slide 12: Modelados 3D Avanzados -->
-      <div class="carousel-slide">
-        <div class="slide-content">
-          <img src="assets/modelo3d_personaje.jpg" alt="Modelados 3D Avanzados - Personajes">
-          <div class="caption">
-            <h3>Modelado 3D — Personaje con Rigging</h3>
-            <p>Guerrero con modelado anatómico detallado, armadura, rigging y preparación completa para animación y videojuegos.</p>
-          </div>
-        </div>
-      </div>
+                    <!-- Slide 13: Animación en galería -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <video autoplay muted loop playsinline>
+                                <source src="assets/animacion_en_galeria.mp4" type="video/mp4">
+                            </video>
+                            <div class="caption">
+                                <h3>Animación CSS Generativa</h3>
+                                <p>Pieza de animación interactiva desarrollada íntegramente con CSS y JavaScript. Geometría dinámica, interpolación de color y efectos de partículas sin dependencias externas.</p>
+                            </div>
+                        </div>
+                    </div>
 
-    </div>
-    
-    <button class="carousel-control prev" aria-label="Slide anterior">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15 18l-6-6 6-6"/>
-      </svg>
-    </button>
-    <button class="carousel-control next" aria-label="Slide siguiente">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 18l6-6-6-6"/>
-      </svg>
-    </button>
-    
-    <div class="carousel-indicators" id="gallery-indicators">
-      <!-- Generated by JS -->
-    </div>
-  </div>
-</section>
+                    <!-- Slide 14: Plasma animado -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <video autoplay muted loop playsinline>
+                                <source src="assets/plasma_animado_y_editable.mp4" type="video/mp4">
+                            </video>
+                            <div class="caption">
+                                <h3>Plasma Animado y Editable</h3>
+                                <p>Efecto de plasma generativo controlable en tiempo real. El usuario puede ajustar velocidad, densidad y paleta de colores mediante sliders CSS custom properties.</p>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Slide 15: Slider animado -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <video autoplay muted loop playsinline>
+                                <source src="assets/slider_animado.mp4" type="video/mp4">
+                            </video>
+                            <div class="caption">
+                                <h3>Slider de Contenido Animado</h3>
+                                <p>Componente de carrusel con transiciones cinematográficas, animaciones de entrada escalonadas y soporte para gestos táctiles. Cero dependencias externas.</p>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Slide 16: Galaxy S26 Dashboard -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <video autoplay muted loop playsinline>
+                                <source src="assets/galaxys26_dashboard.mp4" type="video/mp4">
+                            </video>
+                            <div class="caption">
+                                <h3>Galaxy S26 — UI Dashboard Concept</h3>
+                                <p>Concept UI de dashboard para dispositivo móvil Galaxy S26. Diseño de interfaz futurista con widgets interactivos, métricas en tiempo real y sistema de glassmorphism.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 17: Super Mario en CSS -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <video autoplay muted loop playsinline>
+                                <source src="assets/supermario_en_css.mp4" type="video/mp4">
+                            </video>
+                            <div class="caption">
+                                <h3>Super Mario — Recreación en CSS Puro</h3>
+                                <p>Demostración técnica de CSS avanzado: personaje animado frame a frame, escenario scrolleable y elementos interactivos construidos exclusivamente con HTML y CSS.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 18: Carrusel 3D animado -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <video autoplay muted loop playsinline>
+                                <source src="assets/carrusel_3D_animado.mp4" type="video/mp4">
+                            </video>
+                            <div class="caption">
+                                <h3>Carrusel 3D Animado</h3>
+                                <p>Componente de carrusel tridimensional con perspectiva CSS 3D, rotación continua y transiciones suavizadas. Ideal para portfolios de producto y presentaciones de marca.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 19: Neurona interactiva -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <video autoplay muted loop playsinline>
+                                <source src="assets/neurona_interactiva.mp4" type="video/mp4">
+                            </video>
+                            <div class="caption">
+                                <h3>Neurona Interactiva — Simulación Visual</h3>
+                                <p>Simulación visual de red neuronal con nodos interactivos y propagación de señales animada. Desarrollada con Canvas API para representar conceptos de inteligencia artificial de forma pedagógica.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 20: Sistema solar 2D scrollbar -->
+                    <div class="carousel-slide">
+                        <div class="slide-content">
+                            <video autoplay muted loop playsinline>
+                                <source src="assets/sistema_solar_2D_scrollbar.mp4" type="video/mp4">
+                            </video>
+                            <div class="caption">
+                                <h3>Sistema Solar 2D — Navegación por Scroll</h3>
+                                <p>Sistema solar interactivo navegable mediante scrollbar. Cada planeta orbita con física proporcional a escala real. Construido con CSS puro y animaciones sincronizadas sin JavaScript.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /carousel-track -->
+
+                <button class="carousel-control prev" aria-label="Slide anterior">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button class="carousel-control next" aria-label="Slide siguiente">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+                <div class="carousel-indicators" id="gallery-indicators"></div>
+            </div>
+        </section>
+
+        <!-- CONTACTO -->
         <section id="contacto">
             <h2>Contacto</h2>
             <p>Conecta con nuestro equipo de expertos para discutir cómo podemos transformar tu empresa con tecnologías de vanguardia adaptadas a tus necesidades específicas.</p>
-            
             <div class="contact-info">
                 <div>
                     <div class="contact-method">
                         <i class="fas fa-envelope contact-icon"></i>
                         <div class="contact-details">
                             <h4>Email</h4>
-                            <p>estudiosivality<!-- -->&#64;<!-- -->gmail.com</p>
+                            <p>estudiosivality&#64;gmail.com</p>
                         </div>
                     </div>
-                    
                     <div class="contact-method">
                         <i class="fas fa-phone contact-icon"></i>
                         <div class="contact-details">
@@ -510,7 +1852,6 @@
                             <p>+52 (828) 105 0910</p>
                         </div>
                     </div>
-                    
                     <div class="contact-method">
                         <i class="fas fa-map-marker-alt contact-icon"></i>
                         <div class="contact-details">
@@ -519,9 +1860,7 @@
                             <p>Cadereyta, Jiménez, Nuevo León, México</p>
                         </div>
                     </div>
-
                 </div>
-                
                 <div>
                     <div class="contact-method">
                         <i class="fas fa-clock contact-icon"></i>
@@ -531,16 +1870,14 @@
                             <p>Sábado: 9:00 - 14:00</p>
                         </div>
                     </div>
-                    
                     <div class="contact-method">
                         <i class="fas fa-headset contact-icon"></i>
                         <div class="contact-details">
                             <h4>Soporte Técnico</h4>
-                            <p>soporte<!-- -->&#64;<!-- -->estudiosivality.com</p>
+                            <p>soporte&#64;estudiosivality.com</p>
                             <p>Disponible 24/7</p>
                         </div>
                     </div>
-                    
                     <div class="social-links">
                         <a href="https://www.linkedin.com/in/estudiosivality/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                         <a href="https://www.facebook.com/IvalityEstudios" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
@@ -549,51 +1886,46 @@
                     </div>
                 </div>
             </div>
-
             <form class="contact-form">
                 <div class="form-group">
                     <label for="nombre">Nombre Completo</label>
                     <input type="text" id="nombre" name="nombre" required>
                 </div>
-                
                 <div class="form-group">
-                    <label for="empresa">Empresa/Organización</label>
+                    <label for="empresa">Empresa / Organización</label>
                     <input type="text" id="empresa" name="empresa" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="email">Email Corporativo</label>
                     <input type="email" id="email" name="email" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="telefono">Teléfono</label>
                     <input type="tel" id="telefono" name="telefono">
                 </div>
-                
                 <div class="form-group">
                     <label for="proyecto">Describe tu Proyecto</label>
                     <textarea id="proyecto" name="proyecto" placeholder="Cuéntanos sobre tu proyecto, desafíos actuales y objetivos de transformación digital..." required></textarea>
                 </div>
-                
                 <button type="submit" class="btn">Enviar Consulta</button>
             </form>
         </section>
+
     </main>
 
+    <!-- FOOTER -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Estudios Ivality</h3>
                 <p>Líderes en transformación digital industrial, especializados en soluciones de vanguardia para la Industria 4.0 y más allá.</p>
                 <div class="social-links">
-                    <a href="https://www.linkedin.com/in/estudiosivality/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://www.facebook.com/Ivalitystudios" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
-                    <a href="https://github.com/EstudiosIvality" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-                    <a href="https://www.youtube.com/@IvalityEstudios" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.linkedin.com/in/estudiosivality/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://www.facebook.com/Ivalitystudios" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="https://github.com/EstudiosIvality" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.youtube.com/@IvalityEstudios" target="_blank"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
-
             <div class="footer-section">
                 <h3>Servicios</h3>
                 <ul>
@@ -604,7 +1936,6 @@
                     <li><a href="#servicios">Inteligencia Artificial y Automatización</a></li>
                 </ul>
             </div>
-
             <div class="footer-section">
                 <h3>Sectores</h3>
                 <ul>
@@ -615,11 +1946,10 @@
                     <li><a href="#">Salud y Biotecnología</a></li>
                 </ul>
             </div>
-
             <div class="footer-section">
                 <h3>Contacto</h3>
                 <ul>
-                    <li>📧 estudiosivality<!-- -->&#64;<!-- -->gmail.com</li>
+                    <li>📧 estudiosivality&#64;gmail.com</li>
                     <li>📞 +52 (828) 146 0511</li>
                     <li>📞 +52 (828) 105 0910</li>
                     <li>📍 Cadereyta, Jiménez, Nuevo León, México</li>
@@ -628,7 +1958,6 @@
                 </ul>
             </div>
         </div>
-
         <div class="copyright">
             <p>&copy; 2025 Estudios Ivality. Todos los derechos reservados. | Innovación sin límites para la industria del futuro.</p>
         </div>
@@ -636,51 +1965,134 @@
 
     <div class="mobile-cursor" id="mobile-cursor"></div>
 
+    <!-- ================================================
+         SCRIPTS
+    ================================================ -->
     <script src="script.js"></script>
     <script>
-      // Galería de proyectos carousel — independiente del ImprovedCarousel de script.js
-      (function() {
-        var track = document.getElementById('gallery-track');
-        if (!track) return; // safety check
+    // ── THEME SWITCH ─────────────────────────────────────────────
+    (function() {
+        var html = document.documentElement;
+        var STORAGE_KEY = 'ivality-theme';
 
-        var slides = track.querySelectorAll('.carousel-slide');
-        var indicatorsContainer = document.getElementById('gallery-indicators');
-        var current = 0;
-        var timer;
+        // Restaurar preferencia guardada o usar 'dark' por defecto
+        var saved = localStorage.getItem(STORAGE_KEY) || 'dark';
+        html.setAttribute('data-theme', saved);
 
-        // Build indicators
-        slides.forEach(function(_, i) {
-          var btn = document.createElement('button');
-          btn.className = 'indicator' + (i === 0 ? ' active' : '');
-          btn.setAttribute('aria-label', 'Ir a slide ' + (i + 1));
-          btn.addEventListener('click', function() { goTo(i); });
-          indicatorsContainer.appendChild(btn);
-        });
-
-        function getIndicators() {
-          return indicatorsContainer.querySelectorAll('.indicator');
+        function toggleTheme() {
+            var current = html.getAttribute('data-theme');
+            var next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem(STORAGE_KEY, next);
         }
 
+        // Ambos botones (desktop + sidebar) hacen lo mismo
+        document.getElementById('theme-switch-desktop').addEventListener('click', toggleTheme);
+        document.getElementById('theme-switch-sidebar').addEventListener('click', toggleTheme);
+    })();
+
+    // ── SIDEBAR ──────────────────────────────────────────────────
+    (function() {
+        var sidebar  = document.getElementById('sidebar');
+        var overlay  = document.getElementById('sidebar-overlay');
+        var toggle   = document.getElementById('menu-toggle');
+        var closeBtn = document.getElementById('sidebar-close');
+        var links    = document.querySelectorAll('.sidebar-link');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            overlay.classList.add('visible');
+            toggle.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('visible');
+            toggle.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        toggle.addEventListener('click', function() {
+            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        });
+
+        closeBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
+
+        // Cerrar al navegar
+        links.forEach(function(link) {
+            link.addEventListener('click', closeSidebar);
+        });
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+    })();
+
+    // ── CARRUSEL GALERÍA ─────────────────────────────────────────
+    (function() {
+        var track      = document.getElementById('gallery-track');
+        if (!track) return;
+
+        var slides     = track.querySelectorAll('.carousel-slide');
+        var container  = document.getElementById('gallery-indicators');
+        var current    = 0;
+        var timer;
+        var INTERVAL   = 5000;
+
+        // Construir indicadores
+        slides.forEach(function(_, i) {
+            var btn = document.createElement('button');
+            btn.className = 'indicator' + (i === 0 ? ' active' : '');
+            btn.setAttribute('aria-label', 'Ir a slide ' + (i + 1));
+            btn.addEventListener('click', function() { goTo(i); });
+            container.appendChild(btn);
+        });
+
+        function indicators() { return container.querySelectorAll('.indicator'); }
+
         function goTo(n) {
-          var indicators = getIndicators();
-          slides[current].classList.remove('active');
-          indicators[current].classList.remove('active');
-          current = (n + slides.length) % slides.length;
-          slides[current].classList.add('active');
-          indicators[current].classList.add('active');
-          resetTimer();
+            var dots = indicators();
+            slides[current].classList.remove('active');
+            dots[current].classList.remove('active');
+
+            // Pausar video anterior
+            var prevVideo = slides[current].querySelector('video');
+            if (prevVideo) prevVideo.pause();
+
+            current = (n + slides.length) % slides.length;
+            slides[current].classList.add('active');
+            dots[current].classList.add('active');
+
+            // Reproducir video nuevo
+            var nextVideo = slides[current].querySelector('video');
+            if (nextVideo) nextVideo.play().catch(function(){});
+
+            resetTimer();
         }
 
         function resetTimer() {
-          clearInterval(timer);
-          timer = setInterval(function() { goTo(current + 1); }, 5000);
+            clearInterval(timer);
+            timer = setInterval(function() { goTo(current + 1); }, INTERVAL);
         }
 
-        var gallery = track.closest('.carousel-container');
-        gallery.querySelector('.carousel-control.prev').addEventListener('click', function() { goTo(current - 1); });
-        gallery.querySelector('.carousel-control.next').addEventListener('click', function() { goTo(current + 1); });
+        var wrap = track.closest('.carousel-container');
+        wrap.querySelector('.carousel-control.prev').addEventListener('click', function() { goTo(current - 1); });
+        wrap.querySelector('.carousel-control.next').addEventListener('click', function() { goTo(current + 1); });
 
+        // Swipe táctil
+        var startX = 0;
+        wrap.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; }, { passive: true });
+        wrap.addEventListener('touchend', function(e) {
+            var diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
+        }, { passive: true });
+
+        // Arrancar
         resetTimer();
-      })();    </script>
+    })();
+    </script>
 </body>
 </html>
