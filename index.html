@@ -70,9 +70,10 @@
     <\/script>
 
     <!-- Favicons -->
-    <link rel="icon" type="image/png" href="assets/ivalityicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/ivalityicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/ivalityicon.png">
     <link rel="shortcut icon" type="image/png" href="assets/ivalityicon.png">
-    <link rel="apple-touch-icon" href="assets/ivalityicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/ivalityicon.png">
     <meta name="theme-color" content="#f0f2f7">
 
     <!-- Fuentes y estilos externos -->
@@ -2250,24 +2251,27 @@
 
     // ── SIDEBAR ──────────────────────────────────────────────────
     (function() {
-        // Esperar a que el DOM esté listo
+        var _initialized = false;
+
         function initSidebar() {
+            // Evitar doble inicialización
+            if (_initialized) return;
+
             var sidebar  = document.getElementById('sidebar');
             var overlay  = document.getElementById('sidebar-overlay');
             var toggle   = document.getElementById('menu-toggle');
             var closeBtn = document.getElementById('sidebar-close');
-            var links    = document.querySelectorAll('.sidebar-link');
 
-            if (!sidebar || !overlay || !toggle || !closeBtn) {
-                console.warn('Sidebar: elementos no encontrados');
-                return;
-            }
+            // Verificar que todos los elementos existen antes de continuar
+            if (!sidebar || !overlay || !toggle || !closeBtn) return;
 
-            // Forzar display:block en overlay por si el CSS no lo aplicó aún
+            _initialized = true;
+
+            // Overlay: visible pero sin bloquear clicks cuando está cerrado
             overlay.style.display = 'block';
             overlay.style.pointerEvents = 'none';
 
-            function openSidebar() {
+            function open() {
                 sidebar.classList.add('open');
                 overlay.classList.add('visible');
                 overlay.style.pointerEvents = 'all';
@@ -2275,7 +2279,7 @@
                 document.body.style.overflow = 'hidden';
             }
 
-            function closeSidebar() {
+            function close() {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('visible');
                 overlay.style.pointerEvents = 'none';
@@ -2286,43 +2290,31 @@
             toggle.addEventListener('click', function(e) {
                 e.stopPropagation();
                 e.stopImmediatePropagation();
-                sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+                sidebar.classList.contains('open') ? close() : open();
             });
 
             closeBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                closeSidebar();
+                close();
             });
 
-            overlay.addEventListener('click', closeSidebar);
+            overlay.addEventListener('click', close);
 
-            links.forEach(function(link) {
-                link.addEventListener('click', function() {
-                    closeSidebar();
-                });
+            document.querySelectorAll('.sidebar-link').forEach(function(link) {
+                link.addEventListener('click', close);
             });
 
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeSidebar();
+                if (e.key === 'Escape' && sidebar.classList.contains('open')) close();
             });
-
-            console.log('Sidebar: inicializado correctamente');
         }
 
-        // Ejecutar cuando el DOM esté listo — usar window load como fallback robusto
+        // Un solo punto de entrada — DOMContentLoaded o inmediato si ya cargó
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initSidebar);
         } else {
-            // DOM ya disponible, pero esperamos un tick para que script.js cargue primero
-            setTimeout(initSidebar, 0);
+            initSidebar();
         }
-        // Fallback de seguridad
-        window.addEventListener('load', function() {
-            var sidebar = document.getElementById('sidebar');
-            if (sidebar && !sidebar._sidebarInitialized) {
-                initSidebar();
-            }
-        });
     })();
 
     // ── CARRUSEL GALERÍA ─────────────────────────────────────────
