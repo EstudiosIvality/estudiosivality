@@ -1713,7 +1713,7 @@
                 <div class="project-card">
                     <div class="project-video">
                         <video autoplay muted loop playsinline>
-                            <source src="assets/SISCA2.mp4" type="video/mp4">
+                            <source data-src="assets/SISCA2.mp4" type="video/mp4">
                         </video>
                     </div>
                     <div class="project-info">
@@ -1992,7 +1992,7 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <video autoplay muted loop playsinline>
-                                <source src="assets/animacion_en_galeria.mp4" type="video/mp4">
+                                <source data-src="assets/animacion_en_galeria.mp4" type="video/mp4">
                             </video>
                             <div class="caption">
                                 <h3>Animación CSS Generativa</h3>
@@ -2005,7 +2005,7 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <video autoplay muted loop playsinline>
-                                <source src="assets/plasma_animado_y_editable.mp4" type="video/mp4">
+                                <source data-src="assets/plasma_animado_y_editable.mp4" type="video/mp4">
                             </video>
                             <div class="caption">
                                 <h3>Plasma Animado y Editable</h3>
@@ -2018,7 +2018,7 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <video autoplay muted loop playsinline>
-                                <source src="assets/slider_animado.mp4" type="video/mp4">
+                                <source data-src="assets/slider_animado.mp4" type="video/mp4">
                             </video>
                             <div class="caption">
                                 <h3>Slider de Contenido Animado</h3>
@@ -2031,7 +2031,7 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <video autoplay muted loop playsinline>
-                                <source src="assets/galaxys26_dashboard.mp4" type="video/mp4">
+                                <source data-src="assets/galaxys26_dashboard.mp4" type="video/mp4">
                             </video>
                             <div class="caption">
                                 <h3>Galaxy S26 — UI Dashboard Concept</h3>
@@ -2044,7 +2044,7 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <video autoplay muted loop playsinline>
-                                <source src="assets/supermario_en_css.mp4" type="video/mp4">
+                                <source data-src="assets/supermario_en_css.mp4" type="video/mp4">
                             </video>
                             <div class="caption">
                                 <h3>Super Mario — Recreación en CSS Puro</h3>
@@ -2057,7 +2057,7 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <video autoplay muted loop playsinline>
-                                <source src="assets/carrusel_3D_animado.mp4" type="video/mp4">
+                                <source data-src="assets/carrusel_3D_animado.mp4" type="video/mp4">
                             </video>
                             <div class="caption">
                                 <h3>Carrusel 3D Animado</h3>
@@ -2070,7 +2070,7 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <video autoplay muted loop playsinline>
-                                <source src="assets/neurona_interactiva.mp4" type="video/mp4">
+                                <source data-src="assets/neurona_interactiva.mp4" type="video/mp4">
                             </video>
                             <div class="caption">
                                 <h3>Neurona Interactiva — Simulación Visual</h3>
@@ -2083,7 +2083,7 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <video autoplay muted loop playsinline>
-                                <source src="assets/sistema_solar_2D_scrollbar.mp4" type="video/mp4">
+                                <source data-src="assets/sistema_solar_2D_scrollbar.mp4" type="video/mp4">
                             </video>
                             <div class="caption">
                                 <h3>Sistema Solar 2D — Navegación por Scroll</h3>
@@ -2096,7 +2096,7 @@
                     <div class="carousel-slide">
                         <div class="slide-content">
                             <video autoplay muted loop playsinline>
-                                <source src="assets/recorridovirtual.mp4" type="video/mp4">
+                                <source data-src="assets/recorridovirtual.mp4" type="video/mp4">
                             </video>
                             <div class="caption">
                                 <h3>Recorrido Virtual — Espacio Arquitectónico 3D</h3>
@@ -2373,6 +2373,19 @@
 
         function indicators() { return container.querySelectorAll('.indicator'); }
 
+        function loadVideo(video) {
+            if (!video) return;
+            // Lazy load: asignar src solo cuando se necesita
+            var sources = video.querySelectorAll('source[data-src]');
+            if (sources.length > 0) {
+                sources.forEach(function(s) {
+                    s.setAttribute('src', s.getAttribute('data-src'));
+                    s.removeAttribute('data-src');
+                });
+                video.load();
+            }
+        }
+
         function goTo(n) {
             var dots = indicators();
             slides[current].classList.remove('active');
@@ -2386,9 +2399,19 @@
             slides[current].classList.add('active');
             dots[current].classList.add('active');
 
-            // Reproducir video nuevo
+            // Lazy load + reproducir video nuevo
             var nextVideo = slides[current].querySelector('video');
-            if (nextVideo) nextVideo.play().catch(function(){});
+            if (nextVideo) {
+                loadVideo(nextVideo);
+                var playPromise = nextVideo.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(function() {
+                        // Si autoplay falla, intentar con interacción
+                        nextVideo.muted = true;
+                        nextVideo.play().catch(function(){});
+                    });
+                }
+            }
 
             resetTimer();
         }
@@ -2409,6 +2432,12 @@
             var diff = startX - e.changedTouches[0].clientX;
             if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
         }, { passive: true });
+
+        // Precargar el primer slide si tiene video
+        (function() {
+            var firstVideo = slides[0].querySelector('video');
+            if (firstVideo) loadVideo(firstVideo);
+        })();
 
         // Arrancar
         resetTimer();
