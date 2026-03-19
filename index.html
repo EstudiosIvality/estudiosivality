@@ -67,7 +67,7 @@
             "https://www.youtube.com/@IvalityEstudios"
         ]
     }
-    <\/script>
+    </script>
 
     <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="assets/ivalityicon.png">
@@ -82,6 +82,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <!-- Script de tema en HEAD para evitar pantalla en blanco (FOUC) -->
+    <script>
+    (function(){
+        var t = localStorage.getItem('ivality-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', t);
+    })();
+    </script>
+
     <!-- ================================================
          TEMA 1: DARK / TECH  (activo cuando data-theme="dark")
          TEMA 2: LIGHT / LIQUID GLASS (activo cuando data-theme="light")
@@ -92,6 +100,10 @@
     ============================================================ */
 
     /* — Tema oscuro (por defecto) — */
+    html { background: #f0f2f7; }
+    [data-theme="dark"] html,
+    html[data-theme="dark"] { background: #050810; }
+
     :root,
     [data-theme="dark"] {
         --bg-void:       #050810;
@@ -164,8 +176,8 @@
     html { overflow-x: hidden; scroll-behavior: smooth; }
     body {
         font-family: 'Rajdhani', sans-serif;
-        background: var(--bg-void);
-        color: var(--text-bright);
+        background: var(--bg-void, #f0f2f7);
+        color: var(--text-bright, #0d1026);
         overflow-x: hidden;
         line-height: 1.65;
         max-width: 100vw;
@@ -2229,27 +2241,23 @@
     <script src="script.js"></script>
     <script>
     // ── THEME SWITCH ─────────────────────────────────────────────
+    // El tema ya se aplica en el <head> para evitar pantalla en blanco.
+    // Aquí solo enlazamos los botones de toggle.
     (function() {
-        var html = document.documentElement;
         var STORAGE_KEY = 'ivality-theme';
 
-        // Aplicar tema guardado inmediatamente (antes del DOM completo)
-        var saved = localStorage.getItem(STORAGE_KEY) || 'light';
-        html.setAttribute('data-theme', saved);
-
         function toggleTheme() {
-            var current = html.getAttribute('data-theme');
+            var current = document.documentElement.getAttribute('data-theme');
             var next = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
+            document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem(STORAGE_KEY, next);
         }
 
-        // Esperar DOM antes de agregar listeners
         function bindSwitches() {
             var desktop = document.getElementById('theme-switch-desktop');
-            var sidebar = document.getElementById('theme-switch-sidebar');
-            if (desktop) desktop.addEventListener('click', toggleTheme);
-            if (sidebar)  sidebar.addEventListener('click', toggleTheme);
+            var sidebarBtn = document.getElementById('theme-switch-sidebar');
+            if (desktop)    desktop.addEventListener('click', toggleTheme);
+            if (sidebarBtn) sidebarBtn.addEventListener('click', toggleTheme);
         }
 
         if (document.readyState === 'loading') {
