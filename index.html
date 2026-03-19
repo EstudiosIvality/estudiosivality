@@ -2233,7 +2233,7 @@
         var html = document.documentElement;
         var STORAGE_KEY = 'ivality-theme';
 
-        // Restaurar preferencia guardada o usar 'dark' por defecto
+        // Aplicar tema guardado inmediatamente (antes del DOM completo)
         var saved = localStorage.getItem(STORAGE_KEY) || 'light';
         html.setAttribute('data-theme', saved);
 
@@ -2244,9 +2244,19 @@
             localStorage.setItem(STORAGE_KEY, next);
         }
 
-        // Ambos botones (desktop + sidebar) hacen lo mismo
-        document.getElementById('theme-switch-desktop').addEventListener('click', toggleTheme);
-        document.getElementById('theme-switch-sidebar').addEventListener('click', toggleTheme);
+        // Esperar DOM antes de agregar listeners
+        function bindSwitches() {
+            var desktop = document.getElementById('theme-switch-desktop');
+            var sidebar = document.getElementById('theme-switch-sidebar');
+            if (desktop) desktop.addEventListener('click', toggleTheme);
+            if (sidebar)  sidebar.addEventListener('click', toggleTheme);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', bindSwitches);
+        } else {
+            bindSwitches();
+        }
     })();
 
     // ── SIDEBAR ──────────────────────────────────────────────────
