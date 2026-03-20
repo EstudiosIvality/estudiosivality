@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="google-site-verification" content="ZK7VVOgotYKUkgYU5iPhEZaOWmS2pRDsKZzRRfesBRU" />
-        <meta name="robots" content="index, follow">
+    <meta name="google-site-verification" content="ZK7VVOgotYKUkgYU5iPhEZaOWmS2pRDsKZzRRfesBRU" />
     <title>Estudios Ivality | Desarrollo Web, VR y Videojuegos en Nuevo León</title>
     <meta name="description" content="Estudios Ivality — Desarrollo web, realidad virtual, videojuegos, simuladores 3D y diseño gráfico en Cadereyta, Nuevo León, México. Soluciones digitales para empresas en Monterrey y todo NL.">
     <meta name="keywords" content="Estudios Ivality, Humbrahexx, desarrollo web, web, diseño web, Cadereyta, Cadereyta Jiménez, Cadereyta Jimenez, Monterrey, MTY, México, Mexico, Nuevo León, Nuevo Leon, NL, N.L., realidad virtual, videojuegos Unity, simuladores 3D, UX UI, transformación digital, industria 4.0, desarrollo de software, landing page, portafolio digital, diseño gráfico, motion graphics">
@@ -30,7 +29,6 @@
     <meta name="twitter:description" content="Desarrollo web, realidad virtual, videojuegos y diseño gráfico en Cadereyta, Nuevo León, México.">
     <meta name="twitter:image" content="https://estudiosivality.github.io/estudiosivality/assets/ivalityicon.png">
 
-    
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -67,12 +65,14 @@
     }
     </script>
 
+    <!-- Favicons -->
     <link rel="icon" type="image/png" sizes="32x32" href="assets/ivalityicon.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/ivalityicon.png">
     <link rel="shortcut icon" type="image/png" href="assets/ivalityicon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/ivalityicon.png">
     <meta name="theme-color" content="#f0f2f7">
 
+    <!-- Fuentes y estilos externos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -86,7 +86,7 @@
     </script>
 
     <style>
-
+    
     html { background: #f0f2f7; }
     [data-theme="dark"] html,
     html[data-theme="dark"] { background: #050810; }
@@ -117,7 +117,6 @@
         --clip-tag:      polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
         --transition:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
 
-        /* switch pill */
         --switch-bg:       rgba(0, 229, 255, 0.12);
         --switch-border:   rgba(0, 229, 255, 0.4);
         --switch-knob:     var(--cyan);
@@ -125,7 +124,6 @@
         --switch-icon-on:  '☾';
     }
 
-    /* — Tema claro — */
     [data-theme="light"] {
         --bg-void:       #f0f2f7;
         --bg-deep:       #e8ebf4;
@@ -156,6 +154,9 @@
         --switch-knob:   #3d4fff;
     }
 
+    /* ============================================================
+       RESET
+    ============================================================ */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { overflow-x: hidden; scroll-behavior: smooth; }
     body {
@@ -169,9 +170,6 @@
         transition: background 0.4s ease, color 0.4s ease;
     }
 
-    /* ============================================================
-       FONDO ANIMADO
-    ============================================================ */
     .circuit-bg {
         position: fixed; inset: 0; z-index: -2;
         transition: background 0.6s ease;
@@ -213,9 +211,7 @@
         to   { transform: translate(80px,80px); }
     }
 
-    /* ============================================================
-       THEME SWITCH BUTTON
-    ============================================================ */
+
     .theme-switch {
         display: flex;
         align-items: center;
@@ -248,6 +244,7 @@
         box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     }
 
+    /* Knob: izquierda = light (sol activo), derecha = dark (luna activa) */
     [data-theme="dark"] .switch-knob {
         transform: translateX(22px);
     }
@@ -261,6 +258,7 @@
     .switch-icon.sun  { color: var(--gold); }
     .switch-icon.moon { color: var(--cyan); }
 
+    /* Sol activo en light, luna activa en dark */
     [data-theme="dark"]  .switch-icon.sun  { opacity: 0.4; }
     [data-theme="light"] .switch-icon.moon { opacity: 0.4; }
 
@@ -1846,6 +1844,7 @@
                                 <p>Pieza de animación interactiva desarrollada íntegramente con CSS y JavaScript. Geometría dinámica, interpolación de color y efectos de partículas sin dependencias externas.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 2 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1857,6 +1856,7 @@
                                 <p>Efecto de plasma generativo controlable en tiempo real. El usuario puede ajustar velocidad, densidad y paleta de colores mediante sliders CSS custom properties.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 3 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1868,6 +1868,7 @@
                                 <p>Componente de carrusel con transiciones cinematográficas, animaciones de entrada escalonadas y soporte para gestos táctiles. Cero dependencias externas.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 4 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1879,6 +1880,7 @@
                                 <p>Concept UI de dashboard para dispositivo móvil Galaxy S26. Diseño de interfaz futurista con widgets interactivos, métricas en tiempo real y sistema de glassmorphism.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 5 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1890,6 +1892,7 @@
                                 <p>Demostración técnica de CSS avanzado: personaje animado frame a frame, escenario scrolleable y elementos interactivos construidos exclusivamente con HTML y CSS.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 6 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1901,6 +1904,7 @@
                                 <p>Componente de carrusel tridimensional con perspectiva CSS 3D, rotación continua y transiciones suavizadas. Ideal para portfolios de producto y presentaciones de marca.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 7 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1912,6 +1916,7 @@
                                 <p>Simulación visual de red neuronal con nodos interactivos y propagación de señales animada. Desarrollada con Canvas API para representar conceptos de inteligencia artificial de forma pedagógica.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 8 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1923,6 +1928,7 @@
                                 <p>Sistema solar interactivo navegable mediante scrollbar. Cada planeta orbita con física proporcional a escala real. Construido con CSS puro y animaciones sincronizadas sin JavaScript.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 9 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1934,6 +1940,7 @@
                                 <p>Recorrido en primera persona por un espacio arquitectónico clásico renderizado en tiempo real. Simulación de reflexión de agua sobre superficies, iluminación volumétrica y navegación inmersiva desarrollada en motor 3D.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 10 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1943,6 +1950,7 @@
                                 <p>Sitio profesional para distribuidor autorizado de lubricantes Petro-Canada en México. Diseño oscuro B2B de alto impacto.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 11 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1952,6 +1960,7 @@
                                 <p>Panel de control con KPIs en tiempo real, gráficas de ventas por hora y semana, y top 5 productos.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 12 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1961,6 +1970,7 @@
                                 <p>Sistema POS completo con carrito de compras, cobro y generación de ticket. Total procesado: $113,387 MXN.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 13 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1970,6 +1980,7 @@
                                 <p>Panel de control con ventas del día, ticket promedio, actividad por hora y ranking de productos. Modo oscuro y claro.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 14 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1979,6 +1990,7 @@
                                 <p>Portal institucional completo con gestión de alumnos, docentes, calificaciones y control de roles multi-usuario.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 15 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1988,6 +2000,7 @@
                                 <p>Tarjeta digital de perfil con matrícula, RFC, departamento y estadísticas de grupos, asignaturas y alumnos asignados.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 16 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -1997,6 +2010,7 @@
                                 <p>Gestión de 276 productos y 243,513 unidades en racks para empresa del sector automotriz. Interfaz bilingüe ES/EN.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 17 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -2006,6 +2020,7 @@
                                 <p>Herramienta automatizada para cálculo de costos de materia prima, horas hombre, depreciación de maquinaria y costo financiero.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 18 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -2015,6 +2030,7 @@
                                 <p>Videojuego de naves con 5 clases únicas (Explorer, Spider, Destiny, Raven, Odisea) desarrollado en Python.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 19 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -2024,6 +2040,7 @@
                                 <p>Juego de pelea cyberpunk con personajes 3D animados, modos Historia y Versus, rigging propio en Unity.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 20 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -2033,6 +2050,7 @@
                                 <p>Vehículo modelado en Autodesk Maya en 4 vistas (top, perspectiva, frontal y lateral) con texturas realistas.</p>
                             </div>
                         </div>
+                    </div>
                     <!-- Slide 21 -->
                     <div class="carousel-slide">
                         <div class="slide-content">
@@ -2042,6 +2060,7 @@
                                 <p>Guerrero con modelado anatómico detallado, armadura, rigging y preparación completa para animación y videojuegos.</p>
                             </div>
                         </div>
+                    </div>
                 </div><!-- /carousel-track -->
 
                 <button class="carousel-control prev" aria-label="Slide anterior">
@@ -2104,6 +2123,7 @@
                     <div class="social-links">
                         <a href="https://www.linkedin.com/in/estudiosivality/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                         <a href="https://www.facebook.com/IvalityEstudios" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/ivalityestudios/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
                         <a href="https://github.com/EstudiosIvality" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
                         <a href="https://www.youtube.com/@IvalityEstudios" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
                     </div>
@@ -2145,6 +2165,7 @@
                 <div class="social-links">
                     <a href="https://www.linkedin.com/in/estudiosivality/" target="_blank"><i class="fab fa-linkedin"></i></a>
                     <a href="https://www.facebook.com/Ivalitystudios" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/ivalityestudios/" target="_blank"><i class="fab fa-instagram"></i></a>
                     <a href="https://github.com/EstudiosIvality" target="_blank"><i class="fab fa-github"></i></a>
                     <a href="https://www.youtube.com/@IvalityEstudios" target="_blank"><i class="fab fa-youtube"></i></a>
                 </div>
@@ -2193,9 +2214,7 @@
     ================================================ -->
     <script src="script.js"></script>
     <script>
-    // ── THEME SWITCH ─────────────────────────────────────────────
-    // El tema ya se aplica en el <head> para evitar pantalla en blanco.
-    // Aquí solo enlazamos los botones de toggle.
+
     (function() {
         var STORAGE_KEY = 'ivality-theme';
 
