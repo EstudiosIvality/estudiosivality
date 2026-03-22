@@ -1,121 +1,206 @@
-// ── SMOOTH SCROLLING ─────────────────────────────────────────
+// script.js — Estudios Ivality
+
+// smooth scroll para los links del nav
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
+    anchor.addEventListener('click', function(e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
 
-// ── PARALLAX BACKGROUND ──────────────────────────────────────
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const parallax = document.querySelector('.circuit-lines');
-    if (parallax) parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
-});
+document.addEventListener('DOMContentLoaded', () => {
 
-// ── INTERSECTION OBSERVER (animaciones de entrada) ───────────
-const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+    // animaciones de entrada al hacer scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+    document.querySelectorAll('.service-card, .project-card').forEach(card => {
+        observer.observe(card);
     });
-}, observerOptions);
 
-document.querySelectorAll('.service-card, .project-card').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(50px)';
-    card.style.transition = 'all 0.6s ease-out';
-    observer.observe(card);
-});
-
-// ── FORMULARIO ───────────────────────────────────────────────
-const contactForm = document.querySelector('.contact-form');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const btn = this.querySelector('.btn');
-        const originalText = btn.textContent;
-        btn.textContent = 'Enviando...';
-        btn.disabled = true;
-        setTimeout(() => {
-            btn.textContent = 'Consulta Enviada ✓';
-            btn.style.background = 'linear-gradient(45deg, #00ff88, #00e5ff)';
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.disabled = false;
-                btn.style.background = '';
-                this.reset();
-            }, 3000);
-        }, 2000);
-    });
-}
-
-// ── TYPING TAGLINE ───────────────────────────────────────────
-const tagline = document.querySelector('.tagline');
-if (tagline) {
-    const text = tagline.textContent;
-    tagline.textContent = '';
-    let i = 0;
-    const typeWriter = () => {
-        if (i < text.length) {
-            tagline.textContent += text.charAt(i);
-            i++;
-            setTimeout(typeWriter, 50);
-        }
-    };
-    setTimeout(typeWriter, 1000);
-}
-
-// ── HAMBURGER (script.js legacy) ─────────────────────────────
-// NOTA: Este toggle está DESACTIVADO intencionalmente en mobile.
-// El menú hamburguesa en mobile es manejado por el SIDEBAR (inline script en index.html).
-// Este bloque queda solo como fallback para resoluciones >768px donde el sidebar no aplica.
-const toggleBtn = document.getElementById('menu-toggle');
-const navMenu   = document.getElementById('nav-menu');
-
-if (toggleBtn && navMenu) {
-    toggleBtn.addEventListener('click', () => {
-        // Solo actuar si el sidebar NO está disponible (desktop sin sidebar)
-        const sidebar = document.getElementById('sidebar');
-        const isMobile = window.innerWidth <= 768;
-        if (!isMobile && sidebar) {
-            navMenu.classList.toggle('active');
-        }
-        // En mobile, el inline script del sidebar ya maneja esto con stopImmediatePropagation
-    });
-}
-
-// ── MOBILE CURSOR ────────────────────────────────────────────
-document.addEventListener("DOMContentLoaded", () => {
-    const mobileCursor = document.getElementById('mobile-cursor');
-    if (!mobileCursor) return;
-
-    function isTouchDevice() {
-        return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    // efecto de escritura en el tagline del header
+    const tagline = document.querySelector('.tagline');
+    if (tagline) {
+        const text = tagline.textContent;
+        tagline.textContent = '';
+        let i = 0;
+        const type = () => {
+            if (i < text.length) {
+                tagline.textContent += text.charAt(i++);
+                setTimeout(type, 50);
+            }
+        };
+        setTimeout(type, 1000);
     }
 
-    if (isTouchDevice()) {
+    // formulario de contacto — feedback visual al enviar
+    const form = document.querySelector('.contact-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.btn');
+            const original = btn.textContent;
+            btn.textContent = 'Enviando...';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = 'Consulta Enviada ✓';
+                btn.style.background = 'linear-gradient(45deg, #00ff88, #00e5ff)';
+                setTimeout(() => {
+                    btn.textContent = original;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                    this.reset();
+                }, 3000);
+            }, 2000);
+        });
+    }
+
+    // cursor táctil para dispositivos móviles
+    const mobileCursor = document.getElementById('mobile-cursor');
+    if (mobileCursor && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
         mobileCursor.style.display = 'block';
         document.addEventListener('touchmove', (e) => {
-            const touch = e.touches[0];
-            if (touch) {
-                mobileCursor.style.left = `${touch.clientX}px`;
-                mobileCursor.style.top  = `${touch.clientY}px`;
+            const t = e.touches[0];
+            if (t) {
+                mobileCursor.style.left = `${t.clientX}px`;
+                mobileCursor.style.top  = `${t.clientY}px`;
             }
         }, { passive: true });
     }
-});
 
-// ── CARRUSEL (ImprovedCarousel) ──────────────────────────────
-// NOTA: Este carrusel está DESACTIVADO — el HTML ya tiene su propia
-// lógica de carrusel (IIFE inline). Activar ambos causa doble control.
-// Si quieres usar esta clase, elimina el IIFE del carrusel en index.html.
-//
-// class ImprovedCarousel { ... }  ← desactivado
+    // sidebar móvil
+    const sidebar  = document.getElementById('sidebar');
+    const overlay  = document.getElementById('sidebar-overlay');
+    const toggle   = document.getElementById('menu-toggle');
+    const closeBtn = document.getElementById('sidebar-close');
+
+    if (sidebar && overlay && toggle && closeBtn) {
+        overlay.style.display = 'block';
+        overlay.style.pointerEvents = 'none';
+
+        const openSidebar = () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('visible');
+            overlay.style.pointerEvents = 'all';
+            toggle.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeSidebar = () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('visible');
+            overlay.style.pointerEvents = 'none';
+            toggle.classList.remove('open');
+            document.body.style.overflow = '';
+        };
+
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        });
+
+        closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeSidebar(); });
+        overlay.addEventListener('click', closeSidebar);
+        document.querySelectorAll('.sidebar-link').forEach(l => l.addEventListener('click', closeSidebar));
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+    }
+
+    // switch de tema claro/oscuro
+    const THEME_KEY = 'ivality-theme';
+
+    const applyTheme = (theme) => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(THEME_KEY, theme);
+    };
+
+    const toggleTheme = () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+    };
+
+    document.getElementById('theme-switch-desktop')?.addEventListener('click', toggleTheme);
+    document.getElementById('theme-switch-sidebar')?.addEventListener('click', toggleTheme);
+
+    // carrusel de la galería
+    const track = document.getElementById('gallery-track');
+    if (track) {
+        const slides    = track.querySelectorAll('.carousel-slide');
+        const container = document.getElementById('gallery-indicators');
+        let current     = 0;
+        let timer;
+        const INTERVAL  = 5000;
+
+        // generar los puntitos indicadores
+        slides.forEach((_, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'indicator' + (i === 0 ? ' active' : '');
+            btn.setAttribute('aria-label', 'Ir a slide ' + (i + 1));
+            btn.addEventListener('click', () => goTo(i));
+            container.appendChild(btn);
+        });
+
+        // reproducir video de forma segura (muted obligatorio para autoplay en Chrome/Safari)
+        const playVideo = (video) => {
+            if (!video) return;
+            video.muted = true;
+            video.currentTime = 0;
+            const p = video.play();
+            if (p !== undefined) {
+                p.catch(() => { video.muted = true; video.play().catch(() => {}); });
+            }
+        };
+
+        const goTo = (n) => {
+            const dots = container.querySelectorAll('.indicator');
+
+            // pausar y resetear el video que se va
+            const prev = slides[current].querySelector('video');
+            if (prev) { prev.pause(); prev.currentTime = 0; }
+
+            slides[current].classList.remove('active');
+            dots[current].classList.remove('active');
+
+            current = (n + slides.length) % slides.length;
+
+            slides[current].classList.add('active');
+            dots[current].classList.add('active');
+
+            // reproducir el video que entra
+            const next = slides[current].querySelector('video');
+            if (next) playVideo(next);
+
+            resetTimer();
+        };
+
+        const resetTimer = () => {
+            clearInterval(timer);
+            timer = setInterval(() => goTo(current + 1), INTERVAL);
+        };
+
+        // flechas de navegación
+        const wrap = track.closest('.carousel-container');
+        wrap.querySelector('.carousel-control.prev').addEventListener('click', () => goTo(current - 1));
+        wrap.querySelector('.carousel-control.next').addEventListener('click', () => goTo(current + 1));
+
+        // swipe táctil
+        let startX = 0;
+        wrap.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+        wrap.addEventListener('touchend',   (e) => {
+            const diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
+        }, { passive: true });
+
+        // arrancar con el primer slide
+        const firstVideo = slides[0].querySelector('video');
+        if (firstVideo) playVideo(firstVideo);
+        resetTimer();
+    }
+
+});
