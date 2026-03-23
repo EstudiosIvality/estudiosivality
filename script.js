@@ -1,6 +1,3 @@
-// script.js — Estudios Ivality
-
-// smooth scroll para los links del nav
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
         e.preventDefault();
@@ -11,7 +8,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // animaciones de entrada al hacer scroll
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -25,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(card);
     });
 
-    // efecto de escritura en el tagline del header
     const tagline = document.querySelector('.tagline');
     if (tagline) {
         const text = tagline.textContent;
@@ -40,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(type, 1000);
     }
 
-    // formulario de contacto — feedback visual al enviar
     const form = document.querySelector('.contact-form');
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -62,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // cursor táctil para dispositivos móviles
     const mobileCursor = document.getElementById('mobile-cursor');
     if (mobileCursor && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
         mobileCursor.style.display = 'block';
@@ -75,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: true });
     }
 
-    // sidebar móvil
     const sidebar  = document.getElementById('sidebar');
     const overlay  = document.getElementById('sidebar-overlay');
     const toggle   = document.getElementById('menu-toggle');
@@ -112,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
     }
 
-    // switch de tema claro/oscuro
     const THEME_KEY = 'ivality-theme';
 
     const applyTheme = (theme) => {
@@ -128,9 +119,85 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('theme-switch-desktop')?.addEventListener('click', toggleTheme);
     document.getElementById('theme-switch-sidebar')?.addEventListener('click', toggleTheme);
 
-    // =========================================================
-    // CARRUSEL DE LA GALERÍA — versión con fix de altura + preload
-    // =========================================================
+    (function initGallery() {
+
+        const filters = document.querySelectorAll('.gallery-filter-btn');
+        const panels  = document.querySelectorAll('.gallery-panel');
+        const empty   = document.getElementById('gallery-empty');
+
+        filters.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filters.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.dataset.filter;
+                let visible = 0;
+                panels.forEach(panel => {
+                    const match = filter === 'all' || panel.dataset.category === filter;
+                    panel.classList.toggle('hidden', !match);
+                    if (match) visible++;
+                });
+                empty.classList.toggle('visible', visible === 0);
+            });
+        });
+
+        function playVideoSafe(video) {
+            if (!video) return;
+            video.muted       = true;
+            video.currentTime = 0;
+            const attempt = () => {
+                const p = video.play();
+                if (p !== undefined) {
+                    p.catch(() => {
+                        video.muted = true;
+                        video.play().catch(() => {});
+                    });
+                }
+            };
+            if (video.readyState >= 2) {
+                attempt();
+            } else {
+                video.addEventListener('canplay', attempt, { once: true });
+            }
+        }
+
+        function forceVideoLoad() {
+            document.querySelectorAll('.gallery-panel__media video').forEach(video => {
+                video.muted       = true;
+                video.playsInline = true;
+                video.loop        = true;
+                video.preload     = 'auto';
+                video.load();
+                const panel = video.closest('.gallery-panel');
+                video.addEventListener('loadeddata', () => {
+                    if (panel) panel.setAttribute('data-loaded', '');
+                }, { once: true });
+                if (video.readyState >= 2 && panel) {
+                    panel.setAttribute('data-loaded', '');
+                }
+            });
+        }
+
+        forceVideoLoad();
+
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target.querySelector('video');
+                if (!video) return;
+                if (entry.isIntersecting) {
+                    playVideoSafe(video);
+                } else {
+                    video.pause();
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '100px 0px'
+        });
+
+        panels.forEach(panel => videoObserver.observe(panel));
+
+    })();
+
     const track = document.getElementById('gallery-track');
     if (track) {
         const slides    = track.querySelectorAll('.carousel-slide');
@@ -139,18 +206,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let timer;
         const INTERVAL  = 5000;
 
-        // ── FIX PRINCIPAL: forzar altura explícita en cada video ──────
-        // El CSS usa height:100% en cadena (video → slide-content → carousel-slide → track).
-        // Cuando un slide tiene opacity:0, algunos navegadores no computan la altura
-        // correctamente, dejando el video sin dimensiones y mostrando negro.
-        // Leemos la altura real del track y la aplicamos inline directamente.
         const syncVideoHeights = () => {
             const trackH = track.offsetHeight;
             if (!trackH) return;
             slides.forEach(slide => {
                 const content = slide.querySelector('.slide-content');
                 if (content) content.style.height = trackH + 'px';
-
                 const video = slide.querySelector('video');
                 if (video) {
                     video.style.width     = '100%';
@@ -164,14 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
         syncVideoHeights();
         window.addEventListener('resize', syncVideoHeights);
 
-        // ── Precargar todos los videos ────────────────────────────────
-        // Chrome y Safari suspenden la descarga de videos ocultos (opacity:0).
-        // preload="metadata" + video.load() fuerza la petición HTTP desde el inicio,
-        // para que cuando el carrusel llegue a ese slide ya tenga datos disponibles.
         slides.forEach(slide => {
             const video = slide.querySelector('video');
             if (video) {
-                video.preload     = 'metadata';
+                video.preload     = 'auto';
                 video.muted       = true;
                 video.playsInline = true;
                 video.loop        = true;
@@ -179,7 +236,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // ── Generar indicadores ───────────────────────────────────────
         slides.forEach((_, i) => {
             const btn = document.createElement('button');
             btn.className = 'indicator' + (i === 0 ? ' active' : '');
@@ -188,14 +244,10 @@ document.addEventListener('DOMContentLoaded', () => {
             container.appendChild(btn);
         });
 
-        // ── Reproducir video de forma segura ─────────────────────────
-        // Espera readyState >= 2 (HAVE_CURRENT_DATA) antes de llamar play().
-        // Evita el error "play() interrupted because the media was not ready".
         const playVideo = (video) => {
             if (!video) return;
             video.muted       = true;
             video.currentTime = 0;
-
             const attemptPlay = () => {
                 const p = video.play();
                 if (p !== undefined) {
@@ -205,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
             };
-
             if (video.readyState >= 2) {
                 attemptPlay();
             } else {
@@ -217,26 +268,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // ── Navegación ────────────────────────────────────────────────
         const goTo = (n) => {
             const dots = container.querySelectorAll('.indicator');
-
             const prevVideo = slides[current].querySelector('video');
             if (prevVideo) { prevVideo.pause(); prevVideo.currentTime = 0; }
-
             slides[current].classList.remove('active');
             dots[current].classList.remove('active');
-
             current = (n + slides.length) % slides.length;
-
             slides[current].classList.add('active');
             dots[current].classList.add('active');
-
             syncVideoHeights();
-
             const nextVideo = slides[current].querySelector('video');
             if (nextVideo) playVideo(nextVideo);
-
             resetTimer();
         };
 
@@ -245,20 +288,17 @@ document.addEventListener('DOMContentLoaded', () => {
             timer = setInterval(() => goTo(current + 1), INTERVAL);
         };
 
-        // ── Flechas ───────────────────────────────────────────────────
         const wrap = track.closest('.carousel-container');
         wrap.querySelector('.carousel-control.prev').addEventListener('click', () => goTo(current - 1));
         wrap.querySelector('.carousel-control.next').addEventListener('click', () => goTo(current + 1));
 
-        // ── Swipe táctil ──────────────────────────────────────────────
         let startX = 0;
         wrap.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
-        wrap.addEventListener('touchend',   (e) => {
+        wrap.addEventListener('touchend', (e) => {
             const diff = startX - e.changedTouches[0].clientX;
             if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
         }, { passive: true });
 
-        // ── Arrancar con el primer slide ──────────────────────────────
         const firstVideo = slides[0].querySelector('video');
         if (firstVideo) playVideo(firstVideo);
         resetTimer();
