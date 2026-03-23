@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('theme-switch-sidebar')?.addEventListener('click', toggleTheme);
 
     // =========================================================
-    // CARRUSEL DE LA GALERÍA — versión corregida
+    // CARRUSEL DE LA GALERÍA — versión con fix de altura + preload
     // =========================================================
     const track = document.getElementById('gallery-track');
     if (track) {
@@ -139,21 +139,47 @@ document.addEventListener('DOMContentLoaded', () => {
         let timer;
         const INTERVAL  = 5000;
 
-        // ── 1. Precargar todos los videos del carrusel ──────────
-        // Chrome/Safari suspenden la carga de videos ocultos (opacity:0).
-        // Forzamos preload="metadata" en todos y load() para arrancar la
-        // descarga aunque el slide esté invisible.
+        // ── FIX PRINCIPAL: forzar altura explícita en cada video ──────
+        // El CSS usa height:100% en cadena (video → slide-content → carousel-slide → track).
+        // Cuando un slide tiene opacity:0, algunos navegadores no computan la altura
+        // correctamente, dejando el video sin dimensiones y mostrando negro.
+        // Leemos la altura real del track y la aplicamos inline directamente.
+        const syncVideoHeights = () => {
+            const trackH = track.offsetHeight;
+            if (!trackH) return;
+            slides.forEach(slide => {
+                const content = slide.querySelector('.slide-content');
+                if (content) content.style.height = trackH + 'px';
+
+                const video = slide.querySelector('video');
+                if (video) {
+                    video.style.width     = '100%';
+                    video.style.height    = trackH + 'px';
+                    video.style.objectFit = 'cover';
+                    video.style.display   = 'block';
+                }
+            });
+        };
+
+        syncVideoHeights();
+        window.addEventListener('resize', syncVideoHeights);
+
+        // ── Precargar todos los videos ────────────────────────────────
+        // Chrome y Safari suspenden la descarga de videos ocultos (opacity:0).
+        // preload="metadata" + video.load() fuerza la petición HTTP desde el inicio,
+        // para que cuando el carrusel llegue a ese slide ya tenga datos disponibles.
         slides.forEach(slide => {
             const video = slide.querySelector('video');
             if (video) {
-                video.preload  = 'metadata'; // carga cabeceras + primer frame
-                video.muted    = true;
+                video.preload     = 'metadata';
+                video.muted       = true;
                 video.playsInline = true;
-                video.load();              // dispara la petición HTTP aunque esté oculto
+                video.loop        = true;
+                video.load();
             }
         });
 
-        // ── 2. Generar los puntitos indicadores ─────────────────
+        // ── Generar indicadores ───────────────────────────────────────
         slides.forEach((_, i) => {
             const btn = document.createElement('button');
             btn.className = 'indicator' + (i === 0 ? ' active' : '');
@@ -162,9 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
             container.appendChild(btn);
         });
 
-        // ── 3. Reproducir video de forma segura ─────────────────
-        // Espera a que el video tenga datos suficientes (readyState >= 2)
-        // antes de llamar a .play(), evitando la pantalla negra.
+        // ── Reproducir video de forma segura ─────────────────────────
+        // Espera readyState >= 2 (HAVE_CURRENT_DATA) antes de llamar play().
+        // Evita el error "play() interrupted because the media was not ready".
         const playVideo = (video) => {
             if (!video) return;
             video.muted       = true;
@@ -174,20 +200,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const p = video.play();
                 if (p !== undefined) {
                     p.catch(() => {
-                        // Segundo intento silencioso si falla (política autoplay)
                         video.muted = true;
                         video.play().catch(() => {});
                     });
                 }
             };
 
-            // readyState 2 = HAVE_CURRENT_DATA, suficiente para reproducir
             if (video.readyState >= 2) {
                 attemptPlay();
             } else {
-                // Escuchar el primer evento en que haya datos disponibles
                 video.addEventListener('canplay', attemptPlay, { once: true });
-                // Si aún no inició la carga, dispararla ahora
                 if (video.networkState === HTMLMediaElement.NETWORK_EMPTY ||
                     video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
                     video.load();
@@ -195,11 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // ── 4. Lógica de navegación ──────────────────────────────
+        // ── Navegación ────────────────────────────────────────────────
         const goTo = (n) => {
             const dots = container.querySelectorAll('.indicator');
 
-            // Pausar y resetear el video que se va
             const prevVideo = slides[current].querySelector('video');
             if (prevVideo) { prevVideo.pause(); prevVideo.currentTime = 0; }
 
@@ -211,7 +232,8 @@ document.addEventListener('DOMContentLoaded', () => {
             slides[current].classList.add('active');
             dots[current].classList.add('active');
 
-            // Reproducir el video que entra (ya precargado gracias al paso 1)
+            syncVideoHeights();
+
             const nextVideo = slides[current].querySelector('video');
             if (nextVideo) playVideo(nextVideo);
 
@@ -223,12 +245,12 @@ document.addEventListener('DOMContentLoaded', () => {
             timer = setInterval(() => goTo(current + 1), INTERVAL);
         };
 
-        // ── 5. Flechas de navegación ─────────────────────────────
+        // ── Flechas ───────────────────────────────────────────────────
         const wrap = track.closest('.carousel-container');
         wrap.querySelector('.carousel-control.prev').addEventListener('click', () => goTo(current - 1));
         wrap.querySelector('.carousel-control.next').addEventListener('click', () => goTo(current + 1));
 
-        // ── 6. Swipe táctil ──────────────────────────────────────
+        // ── Swipe táctil ──────────────────────────────────────────────
         let startX = 0;
         wrap.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
         wrap.addEventListener('touchend',   (e) => {
@@ -236,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
         }, { passive: true });
 
-        // ── 7. Arrancar con el primer slide ──────────────────────
+        // ── Arrancar con el primer slide ──────────────────────────────
         const firstVideo = slides[0].querySelector('video');
         if (firstVideo) playVideo(firstVideo);
         resetTimer();
