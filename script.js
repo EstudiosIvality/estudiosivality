@@ -128,7 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('theme-switch-desktop')?.addEventListener('click', toggleTheme);
     document.getElementById('theme-switch-sidebar')?.addEventListener('click', toggleTheme);
 
-    // carrusel de la galería
+    // =========================================================
+    // CARRUSEL DE LA GALERÍA — versión corregida
+    // =========================================================
     const track = document.getElementById('gallery-track');
     if (track) {
         const slides    = track.querySelectorAll('.carousel-slide');
@@ -137,7 +139,21 @@ document.addEventListener('DOMContentLoaded', () => {
         let timer;
         const INTERVAL  = 5000;
 
-        // generar los puntitos indicadores
+        // ── 1. Precargar todos los videos del carrusel ──────────
+        // Chrome/Safari suspenden la carga de videos ocultos (opacity:0).
+        // Forzamos preload="metadata" en todos y load() para arrancar la
+        // descarga aunque el slide esté invisible.
+        slides.forEach(slide => {
+            const video = slide.querySelector('video');
+            if (video) {
+                video.preload  = 'metadata'; // carga cabeceras + primer frame
+                video.muted    = true;
+                video.playsInline = true;
+                video.load();              // dispara la petición HTTP aunque esté oculto
+            }
+        });
+
+        // ── 2. Generar los puntitos indicadores ─────────────────
         slides.forEach((_, i) => {
             const btn = document.createElement('button');
             btn.className = 'indicator' + (i === 0 ? ' active' : '');
@@ -146,23 +162,46 @@ document.addEventListener('DOMContentLoaded', () => {
             container.appendChild(btn);
         });
 
-        // reproducir video de forma segura (muted obligatorio para autoplay en Chrome/Safari)
+        // ── 3. Reproducir video de forma segura ─────────────────
+        // Espera a que el video tenga datos suficientes (readyState >= 2)
+        // antes de llamar a .play(), evitando la pantalla negra.
         const playVideo = (video) => {
             if (!video) return;
-            video.muted = true;
+            video.muted       = true;
             video.currentTime = 0;
-            const p = video.play();
-            if (p !== undefined) {
-                p.catch(() => { video.muted = true; video.play().catch(() => {}); });
+
+            const attemptPlay = () => {
+                const p = video.play();
+                if (p !== undefined) {
+                    p.catch(() => {
+                        // Segundo intento silencioso si falla (política autoplay)
+                        video.muted = true;
+                        video.play().catch(() => {});
+                    });
+                }
+            };
+
+            // readyState 2 = HAVE_CURRENT_DATA, suficiente para reproducir
+            if (video.readyState >= 2) {
+                attemptPlay();
+            } else {
+                // Escuchar el primer evento en que haya datos disponibles
+                video.addEventListener('canplay', attemptPlay, { once: true });
+                // Si aún no inició la carga, dispararla ahora
+                if (video.networkState === HTMLMediaElement.NETWORK_EMPTY ||
+                    video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+                    video.load();
+                }
             }
         };
 
+        // ── 4. Lógica de navegación ──────────────────────────────
         const goTo = (n) => {
             const dots = container.querySelectorAll('.indicator');
 
-            // pausar y resetear el video que se va
-            const prev = slides[current].querySelector('video');
-            if (prev) { prev.pause(); prev.currentTime = 0; }
+            // Pausar y resetear el video que se va
+            const prevVideo = slides[current].querySelector('video');
+            if (prevVideo) { prevVideo.pause(); prevVideo.currentTime = 0; }
 
             slides[current].classList.remove('active');
             dots[current].classList.remove('active');
@@ -172,9 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
             slides[current].classList.add('active');
             dots[current].classList.add('active');
 
-            // reproducir el video que entra
-            const next = slides[current].querySelector('video');
-            if (next) playVideo(next);
+            // Reproducir el video que entra (ya precargado gracias al paso 1)
+            const nextVideo = slides[current].querySelector('video');
+            if (nextVideo) playVideo(nextVideo);
 
             resetTimer();
         };
@@ -184,12 +223,12 @@ document.addEventListener('DOMContentLoaded', () => {
             timer = setInterval(() => goTo(current + 1), INTERVAL);
         };
 
-        // flechas de navegación
+        // ── 5. Flechas de navegación ─────────────────────────────
         const wrap = track.closest('.carousel-container');
         wrap.querySelector('.carousel-control.prev').addEventListener('click', () => goTo(current - 1));
         wrap.querySelector('.carousel-control.next').addEventListener('click', () => goTo(current + 1));
 
-        // swipe táctil
+        // ── 6. Swipe táctil ──────────────────────────────────────
         let startX = 0;
         wrap.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
         wrap.addEventListener('touchend',   (e) => {
@@ -197,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (Math.abs(diff) > 50) goTo(current + (diff > 0 ? 1 : -1));
         }, { passive: true });
 
-        // arrancar con el primer slide
+        // ── 7. Arrancar con el primer slide ──────────────────────
         const firstVideo = slides[0].querySelector('video');
         if (firstVideo) playVideo(firstVideo);
         resetTimer();
